@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/contratos/$id/documento")(
 
 function ContractDocumentPage() {
   const { id } = Route.useParams();
-  const { contracts, proposals, clients, representatives, etw } = useApp();
+  const { contracts, proposals, clients, representatives, etw, hydrated } = useApp();
   const contract = contracts.find((c) => c.id === id);
   const client = contract ? clients.find((c) => c.id === contract.clientId) : null;
   const proposal = contract
