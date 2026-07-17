@@ -194,6 +194,11 @@ export function ContractDocument({
           {contract.services.map((s, i) => (
             <li key={i}>
               <strong>{s.nome}:</strong> {s.descricao}
+              {s.informacoes && (
+                <div className="mt-1 whitespace-pre-line text-sm">
+                  <em>Informações adicionais:</em> {s.informacoes}
+                </div>
+              )}
             </li>
           ))}
         </ol>
