@@ -428,6 +428,43 @@ function RepresentativesDialog({
                 onChange={(e) => setForm({ ...form, telefone: e.target.value })}
               />
             </div>
+            <div>
+              <Label>Nacionalidade</Label>
+              <Input
+                value={form.nacionalidade ?? ""}
+                onChange={(e) => setForm({ ...form, nacionalidade: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Estado civil</Label>
+              <Input
+                value={form.estadoCivil ?? ""}
+                placeholder="Solteiro(a), Casado(a)..."
+                onChange={(e) => setForm({ ...form, estadoCivil: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Profissão</Label>
+              <Input
+                value={form.profissao ?? ""}
+                onChange={(e) => setForm({ ...form, profissao: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Data de nascimento</Label>
+              <Input
+                type="date"
+                value={form.dataNascimento ?? ""}
+                onChange={(e) => setForm({ ...form, dataNascimento: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Endereço residencial</Label>
+              <Input
+                value={form.endereco ?? ""}
+                onChange={(e) => setForm({ ...form, endereco: e.target.value })}
+              />
+            </div>
             <div className="sm:col-span-2 flex justify-end">
               <Button
                 size="sm"
@@ -437,7 +474,19 @@ function RepresentativesDialog({
                     return;
                   }
                   addRep(form);
-                  setForm({ ...form, nome: "", cpf: "", rg: "", cargo: "" });
+                  setForm({
+                    ...form,
+                    nome: "",
+                    cpf: "",
+                    rg: "",
+                    cargo: "",
+                    email: "",
+                    telefone: "",
+                    estadoCivil: "",
+                    profissao: "",
+                    dataNascimento: "",
+                    endereco: "",
+                  });
                   toast.success("Representante adicionado");
                 }}
               >
