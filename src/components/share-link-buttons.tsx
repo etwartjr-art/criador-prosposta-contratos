@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Share2, Mail } from "lucide-react";
+import { Copy, Check, Share2, Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 type Props = { title: string; url?: string };
