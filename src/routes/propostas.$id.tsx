@@ -108,6 +108,15 @@ function ProposalDetail() {
                   <XCircle className="mr-1 h-4 w-4" /> Rejeitar
                 </Button>
               )}
+              <Button variant="outline" asChild>
+                <a
+                  href={`/propostas/${proposal.id}/documento`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Eye className="mr-1 h-4 w-4" /> Ver documento
+                </a>
+              </Button>
               <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-1 h-4 w-4" /> Imprimir / PDF
               </Button>
