@@ -1,6 +1,7 @@
 import type { Client, Contract, Proposal, Representative } from "@/lib/types";
 import type { EtwSettings } from "@/lib/types";
 import { brl, formatDate, formatDateLong } from "@/lib/format";
+import etwLogo from "@/assets/etw-logo.jpeg.asset.json";
 
 export function ProposalDocument({
   proposal,
