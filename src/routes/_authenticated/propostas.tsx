@@ -607,6 +607,14 @@ function ProposalDialog({
               honorariosMensais: honorarios,
               taxaImplantacao: implantacao,
               observacoes: obs,
+              assunto: assunto || undefined,
+              cidadeUf: cidadeUf || undefined,
+              responsavelClienteId: responsavelId || undefined,
+              indiceReajuste: indiceReajuste || undefined,
+              formaPagamento: formaPagamento || undefined,
+              diaVencimento: diaVencimento === "" ? undefined : Number(diaVencimento),
+              diaUtilEntrega: diaUtilEntrega === "" ? undefined : Number(diaUtilEntrega),
+              prazoImplementacaoDias: prazoImplantacao === "" ? undefined : Number(prazoImplantacao),
             });
           }}
         >
