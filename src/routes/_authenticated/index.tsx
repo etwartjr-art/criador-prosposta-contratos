@@ -7,7 +7,7 @@ import { brl, formatDate } from "@/lib/format";
 import { Users, FileText, FileSignature, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   component: Dashboard,
 });
 

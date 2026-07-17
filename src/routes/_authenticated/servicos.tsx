@@ -27,7 +27,7 @@ import { Plus, Trash2, Pencil } from "lucide-react";
 import { useApp } from "@/store/app";
 import type { Service, ServiceModule } from "@/lib/types";
 
-export const Route = createFileRoute("/servicos")({
+export const Route = createFileRoute("/_authenticated/servicos")({
   component: ServicesPage,
 });
 

@@ -18,7 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, Printer, CheckCircle2, Eye } from "lucide-react";
 import type { ContractStatus } from "@/lib/types";
 
-export const Route = createFileRoute("/contratos/$id")({
+export const Route = createFileRoute("/_authenticated/contratos/$id")({
   component: ContractDetail,
 });
 

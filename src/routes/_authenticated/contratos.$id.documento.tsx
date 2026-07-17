@@ -7,7 +7,7 @@ import { ArrowLeft, Printer, Download } from "lucide-react";
 import { downloadElementAsPdf } from "@/lib/download-pdf";
 import { ShareLinkButtons } from "@/components/share-link-buttons";
 
-export const Route = createFileRoute("/contratos/$id/documento")({
+export const Route = createFileRoute("/_authenticated/contratos/$id/documento")({
   component: ContractDocumentPage,
 });
 
