@@ -24,6 +24,12 @@ function ContractDocumentPage() {
     if (contract) document.title = `Contrato ${contract.numero}`;
   }, [contract]);
 
+  if (!hydrated) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Carregando documento…</div>
+    );
+  }
+
   if (!contract || !client) {
     return (
       <div className="p-6">
