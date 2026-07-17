@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/propostas/$id/documento")(
 
 function ProposalDocumentPage() {
   const { id } = Route.useParams();
-  const { proposals, clients, etw } = useApp();
+  const { proposals, clients, etw, representatives } = useApp();
   const proposal = proposals.find((p) => p.id === id);
   const client = proposal ? clients.find((c) => c.id === proposal.clientId) : null;
 
@@ -59,7 +59,7 @@ function ProposalDocumentPage() {
         </div>
       </div>
       <div className="print-area mx-auto max-w-5xl bg-background shadow-sm">
-        <ProposalDocument proposal={proposal} client={client} etw={etw} />
+        <ProposalDocument proposal={proposal} client={client} etw={etw} representatives={representatives} />
       </div>
     </div>
   );

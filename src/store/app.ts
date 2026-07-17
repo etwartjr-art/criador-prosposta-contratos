@@ -99,6 +99,11 @@ const mapRep = (r: any): Representative => ({
   cargo: r.cargo ?? undefined,
   email: r.email ?? undefined,
   telefone: r.telefone ?? undefined,
+  nacionalidade: r.nacionalidade ?? undefined,
+  estadoCivil: r.estado_civil ?? undefined,
+  profissao: r.profissao ?? undefined,
+  dataNascimento: r.data_nascimento ?? undefined,
+  endereco: r.endereco ?? undefined,
 });
 const repToRow = (r: Representative) => ({
   id: r.id,
@@ -109,6 +114,11 @@ const repToRow = (r: Representative) => ({
   cargo: r.cargo ?? null,
   email: r.email ?? null,
   telefone: r.telefone ?? null,
+  nacionalidade: r.nacionalidade ?? null,
+  estado_civil: r.estadoCivil ?? null,
+  profissao: r.profissao ?? null,
+  data_nascimento: r.dataNascimento ?? null,
+  endereco: r.endereco ?? null,
 });
 
 const mapService = (r: any): Service => ({
@@ -138,6 +148,14 @@ const mapProposal = (r: any): Proposal => ({
   observacoes: r.observacoes ?? undefined,
   status: r.status,
   createdAt: r.created_at,
+  assunto: r.assunto ?? undefined,
+  cidadeUf: r.cidade_uf ?? undefined,
+  responsavelClienteId: r.responsavel_cliente_id ?? undefined,
+  indiceReajuste: r.indice_reajuste ?? undefined,
+  formaPagamento: r.forma_pagamento ?? undefined,
+  diaVencimento: r.dia_vencimento ?? undefined,
+  diaUtilEntrega: r.dia_util_entrega ?? undefined,
+  prazoImplementacaoDias: r.prazo_implementacao_dias ?? undefined,
 });
 const proposalToRow = (p: Proposal) => ({
   id: p.id,
@@ -151,6 +169,14 @@ const proposalToRow = (p: Proposal) => ({
   observacoes: p.observacoes ?? null,
   status: p.status,
   created_at: p.createdAt,
+  assunto: p.assunto ?? null,
+  cidade_uf: p.cidadeUf ?? null,
+  responsavel_cliente_id: p.responsavelClienteId ?? null,
+  indice_reajuste: p.indiceReajuste ?? null,
+  forma_pagamento: p.formaPagamento ?? null,
+  dia_vencimento: p.diaVencimento ?? null,
+  dia_util_entrega: p.diaUtilEntrega ?? null,
+  prazo_implementacao_dias: p.prazoImplementacaoDias ?? null,
 });
 
 const mapContract = (r: any): Contract => ({
@@ -167,6 +193,17 @@ const mapContract = (r: any): Contract => ({
   status: r.status,
   observacoes: r.observacoes ?? undefined,
   createdAt: r.created_at,
+  dataAssinatura: r.data_assinatura ?? undefined,
+  localDataAssinatura: r.local_data_assinatura ?? undefined,
+  prazoVigenciaMeses: r.prazo_vigencia_meses ?? undefined,
+  renovacaoAutomaticaDias: r.renovacao_automatica_dias ?? undefined,
+  avisoNaoRenovacaoDias: r.aviso_nao_renovacao_dias ?? undefined,
+  avisoPrevioRescisaoDias: r.aviso_previo_rescisao_dias ?? undefined,
+  diaPagamento: r.dia_pagamento ?? undefined,
+  formaPagamento: r.forma_pagamento ?? undefined,
+  jurosMesPercent: r.juros_mes_percent != null ? Number(r.juros_mes_percent) : undefined,
+  multaMoratoriaPercent: r.multa_moratoria_percent != null ? Number(r.multa_moratoria_percent) : undefined,
+  foro: r.foro ?? undefined,
 });
 const contractToRow = (c: Contract) => ({
   id: c.id,
@@ -182,6 +219,17 @@ const contractToRow = (c: Contract) => ({
   status: c.status,
   observacoes: c.observacoes ?? null,
   created_at: c.createdAt,
+  data_assinatura: c.dataAssinatura ?? null,
+  local_data_assinatura: c.localDataAssinatura ?? null,
+  prazo_vigencia_meses: c.prazoVigenciaMeses ?? null,
+  renovacao_automatica_dias: c.renovacaoAutomaticaDias ?? null,
+  aviso_nao_renovacao_dias: c.avisoNaoRenovacaoDias ?? null,
+  aviso_previo_rescisao_dias: c.avisoPrevioRescisaoDias ?? null,
+  dia_pagamento: c.diaPagamento ?? null,
+  forma_pagamento: c.formaPagamento ?? null,
+  juros_mes_percent: c.jurosMesPercent ?? null,
+  multa_moratoria_percent: c.multaMoratoriaPercent ?? null,
+  foro: c.foro ?? null,
 });
 
 const mapEtw = (r: any): EtwSettings => ({
@@ -384,10 +432,21 @@ export const useApp = create<State>()((set, get) => ({
       fimVigencia: fim,
       valorMensal: prop.honorariosMensais,
       services: prop.items,
-      signatariosClienteIds: [],
+      signatariosClienteIds: prop.responsavelClienteId
+        ? [prop.responsavelClienteId]
+        : [],
       signatariosContratada: [get().etw.socios[0] ?? ""],
       status: "Rascunho",
       createdAt: new Date().toISOString(),
+      prazoVigenciaMeses: 12,
+      renovacaoAutomaticaDias: 30,
+      avisoNaoRenovacaoDias: 30,
+      avisoPrevioRescisaoDias: 30,
+      diaPagamento: prop.diaVencimento ?? 5,
+      formaPagamento: prop.formaPagamento ?? "Boleto bancário",
+      jurosMesPercent: 1,
+      multaMoratoriaPercent: 2,
+      foro: get().etw.foro,
     };
     const updatedProp = { ...prop, status: "Aprovada" as const };
     set({

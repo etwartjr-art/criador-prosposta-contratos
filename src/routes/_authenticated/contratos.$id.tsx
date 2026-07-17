@@ -151,7 +151,19 @@ function ContractDetail() {
                 }
               />
             </div>
-            <div className="sm:col-span-2">
+            <div>
+              <Label>Prazo de vigência (meses)</Label>
+              <Input
+                type="number"
+                value={contract.prazoVigenciaMeses ?? 12}
+                onChange={(e) =>
+                  updateContract(contract.id, {
+                    prazoVigenciaMeses: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <div>
               <Label>Valor mensal (R$)</Label>
               <Input
                 type="number"
@@ -164,10 +176,130 @@ function ContractDetail() {
                 }
               />
             </div>
+            <div>
+              <Label>Renovação automática (dias)</Label>
+              <Input
+                type="number"
+                value={contract.renovacaoAutomaticaDias ?? 30}
+                onChange={(e) =>
+                  updateContract(contract.id, {
+                    renovacaoAutomaticaDias: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <div>
+              <Label>Aviso de não renovação (dias)</Label>
+              <Input
+                type="number"
+                value={contract.avisoNaoRenovacaoDias ?? 30}
+                onChange={(e) =>
+                  updateContract(contract.id, {
+                    avisoNaoRenovacaoDias: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <div>
+              <Label>Aviso prévio de rescisão (dias)</Label>
+              <Input
+                type="number"
+                value={contract.avisoPrevioRescisaoDias ?? 30}
+                onChange={(e) =>
+                  updateContract(contract.id, {
+                    avisoPrevioRescisaoDias: Number(e.target.value),
+                  })
+                }
+              />
+            </div>
+            <div>
+              <Label>Data de assinatura</Label>
+              <Input
+                type="date"
+                value={contract.dataAssinatura ?? ""}
+                onChange={(e) =>
+                  updateContract(contract.id, { dataAssinatura: e.target.value })
+                }
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Local de assinatura</Label>
+              <Input
+                value={contract.localDataAssinatura ?? ""}
+                placeholder={`${client.cidade}${client.uf ? ` - ${client.uf}` : ""}`}
+                onChange={(e) =>
+                  updateContract(contract.id, {
+                    localDataAssinatura: e.target.value,
+                  })
+                }
+              />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Pagamento, encargos e foro</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label>Dia de pagamento</Label>
+              <Input
+                type="number"
+                min={1}
+                max={31}
+                value={contract.diaPagamento ?? 5}
+                onChange={(e) =>
+                  updateContract(contract.id, { diaPagamento: Number(e.target.value) })
+                }
+              />
+            </div>
+            <div>
+              <Label>Forma de pagamento</Label>
+              <Input
+                value={contract.formaPagamento ?? ""}
+                placeholder="Boleto, PIX..."
+                onChange={(e) =>
+                  updateContract(contract.id, { formaPagamento: e.target.value })
+                }
+              />
+            </div>
+            <div>
+              <Label>Juros ao mês (%)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={contract.jurosMesPercent ?? 1}
+                onChange={(e) =>
+                  updateContract(contract.id, { jurosMesPercent: Number(e.target.value) })
+                }
+              />
+            </div>
+            <div>
+              <Label>Multa moratória (%)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={contract.multaMoratoriaPercent ?? 2}
+                onChange={(e) =>
+                  updateContract(contract.id, { multaMoratoriaPercent: Number(e.target.value) })
+                }
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>Foro (deixe em branco para usar o padrão)</Label>
+              <Input
+                value={contract.foro ?? ""}
+                placeholder={etw.foro}
+                onChange={(e) =>
+                  updateContract(contract.id, { foro: e.target.value })
+                }
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-sm">Signatários</CardTitle>
           </CardHeader>

@@ -2,22 +2,25 @@ import type { Client, Contract, Proposal, Representative } from "@/lib/types";
 import type { EtwSettings } from "@/lib/types";
 import { brl, formatDate, formatDateLong } from "@/lib/format";
 
-const extenso = (n: number) => {
-  // Simple currency-in-words for BRL is complex; show the numeric with helper text
-  return `${brl(n)} (por extenso)`;
-};
-
 export function ProposalDocument({
   proposal,
   client,
   etw,
+  representatives = [],
 }: {
   proposal: Proposal;
   client: Client;
   etw: EtwSettings;
+  representatives?: Representative[];
 }) {
-  const total =
-    proposal.honorariosMensais + (proposal.taxaImplantacao > 0 ? 0 : 0);
+  const responsavel = proposal.responsavelClienteId
+    ? representatives.find((r) => r.id === proposal.responsavelClienteId)
+    : undefined;
+  const cidadeUf =
+    proposal.cidadeUf ||
+    [client.cidade, client.uf].filter(Boolean).join(" - ") ||
+    "";
+
   return (
     <article className="mx-auto max-w-[820px] rounded-md border border-border bg-card p-10 text-sm text-foreground shadow-sm print:shadow-none">
       <header className="flex items-start justify-between border-b border-border pb-4">
@@ -28,6 +31,12 @@ export function ProposalDocument({
           <h1 className="mt-1 text-2xl font-semibold" style={{ fontFamily: "Fraunces, serif" }}>
             {proposal.numero}
           </h1>
+          {proposal.assunto && (
+            <div className="mt-1 text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">Assunto:</span>{" "}
+              {proposal.assunto}
+            </div>
+          )}
         </div>
         <div className="text-right text-xs">
           <div className="font-semibold text-foreground">{etw.razaoSocial}</div>
@@ -49,12 +58,24 @@ export function ProposalDocument({
             {client.uf ? ` - ${client.uf}` : ""}
             {client.cep ? `, CEP ${client.cep}` : ""}
           </div>
+          {responsavel && (
+            <div className="mt-2 text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                Responsável:
+              </span>{" "}
+              {responsavel.nome}
+              {responsavel.cargo ? ` — ${responsavel.cargo}` : ""}
+            </div>
+          )}
         </div>
         <div className="text-right">
           <div className="text-xs font-semibold uppercase text-muted-foreground">
             Emissão
           </div>
           <div className="mt-1">{formatDateLong(proposal.dataEmissao)}</div>
+          {cidadeUf && (
+            <div className="text-xs text-muted-foreground">{cidadeUf}</div>
+          )}
           <div className="mt-2 text-xs font-semibold uppercase text-muted-foreground">
             Validade
           </div>
@@ -111,9 +132,53 @@ export function ProposalDocument({
             </span>
           </div>
         </div>
-        <p className="mt-2 text-xs text-muted-foreground">
+
+        <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {proposal.formaPagamento && (
+            <div>
+              <dt className="text-xs font-semibold uppercase text-muted-foreground">
+                Forma de pagamento
+              </dt>
+              <dd>{proposal.formaPagamento}</dd>
+            </div>
+          )}
+          {proposal.diaVencimento != null && (
+            <div>
+              <dt className="text-xs font-semibold uppercase text-muted-foreground">
+                Dia de vencimento
+              </dt>
+              <dd>Todo dia {proposal.diaVencimento}</dd>
+            </div>
+          )}
+          {proposal.indiceReajuste && (
+            <div>
+              <dt className="text-xs font-semibold uppercase text-muted-foreground">
+                Índice de reajuste
+              </dt>
+              <dd>{proposal.indiceReajuste}</dd>
+            </div>
+          )}
+          {proposal.prazoImplementacaoDias != null && (
+            <div>
+              <dt className="text-xs font-semibold uppercase text-muted-foreground">
+                Prazo de implantação
+              </dt>
+              <dd>{proposal.prazoImplementacaoDias} dias</dd>
+            </div>
+          )}
+          {proposal.diaUtilEntrega != null && (
+            <div>
+              <dt className="text-xs font-semibold uppercase text-muted-foreground">
+                Dia útil de entrega
+              </dt>
+              <dd>{proposal.diaUtilEntrega}º dia útil</dd>
+            </div>
+          )}
+        </dl>
+
+        <p className="mt-3 text-xs text-muted-foreground">
           A taxa de implantação, quando aplicável, é cobrança única e não compõe
-          o valor mensal recorrente. Total: {extenso(total)}.
+          o valor mensal recorrente.
         </p>
       </section>
 
@@ -133,6 +198,18 @@ export function ProposalDocument({
   );
 }
 
+const qualifyRep = (r: Representative) => {
+  const parts = [
+    r.nacionalidade,
+    r.estadoCivil,
+    r.profissao,
+    r.rg ? `RG ${r.rg}` : null,
+    r.cpf ? `CPF ${r.cpf}` : null,
+    r.endereco ? `residente em ${r.endereco}` : null,
+  ].filter(Boolean);
+  return parts.join(", ");
+};
+
 export function ContractDocument({
   contract,
   proposal,
@@ -149,6 +226,20 @@ export function ContractDocument({
   const signCliente = representatives.filter((r) =>
     contract.signatariosClienteIds.includes(r.id),
   );
+  const foro = contract.foro || etw.foro;
+  const vigMeses = contract.prazoVigenciaMeses ?? 12;
+  const renovDias = contract.renovacaoAutomaticaDias ?? 30;
+  const avisoNaoRenov = contract.avisoNaoRenovacaoDias ?? 30;
+  const avisoRescisao = contract.avisoPrevioRescisaoDias ?? 30;
+  const diaPag = contract.diaPagamento ?? 5;
+  const forma = contract.formaPagamento || "Boleto bancário";
+  const juros = contract.jurosMesPercent ?? 1;
+  const multa = contract.multaMoratoriaPercent ?? 2;
+  const localAss =
+    contract.localDataAssinatura ||
+    [client.cidade, client.uf].filter(Boolean).join(" - ") ||
+    "Goiânia";
+  const dataAss = contract.dataAssinatura || contract.inicioVigencia;
 
   return (
     <article className="mx-auto max-w-[820px] rounded-md border border-border bg-card p-10 text-sm leading-relaxed text-foreground shadow-sm print:shadow-none">
@@ -177,7 +268,20 @@ export function ContractDocument({
           {client.cidade ? `, ${client.cidade}` : ""}
           {client.uf ? ` - ${client.uf}` : ""}
           {client.cep ? `, CEP ${client.cep}` : ""}, doravante denominada
-          CONTRATANTE.
+          CONTRATANTE
+          {signCliente.length > 0 && (
+            <>
+              , neste ato representada por{" "}
+              {signCliente.map((r, i) => (
+                <span key={r.id}>
+                  <strong>{r.nome}</strong>
+                  {qualifyRep(r) ? `, ${qualifyRep(r)}` : ""}
+                  {i < signCliente.length - 1 ? "; " : ""}
+                </span>
+              ))}
+            </>
+          )}
+          .
         </p>
       </section>
 
@@ -188,7 +292,8 @@ export function ContractDocument({
         <p className="mt-2">
           A CONTRATADA prestará à CONTRATANTE os serviços descritos abaixo,
           conforme escopo detalhado na proposta{" "}
-          {proposal ? proposal.numero : "referenciada"}:
+          {proposal ? proposal.numero : "referenciada"}
+          {proposal?.assunto ? ` (${proposal.assunto})` : ""}:
         </p>
         <ol className="mt-2 list-decimal space-y-1 pl-5">
           {contract.services.map((s, i) => (
@@ -209,22 +314,38 @@ export function ContractDocument({
           CLÁUSULA 3ª — DOS HONORÁRIOS E FORMA DE PAGAMENTO
         </h2>
         <p className="mt-2">
-          Pela prestação dos serviços, a CONTRATANTE pagará à CONTRATADA o valor
-          mensal de <strong>{brl(contract.valorMensal)}</strong>, com vencimento
-          no 5º (quinto) dia útil de cada mês subsequente ao da prestação, via
-          boleto bancário ou transferência para conta indicada pela CONTRATADA.
+          Pela prestação dos serviços, a CONTRATANTE pagará à CONTRATADA o
+          valor mensal de <strong>{brl(contract.valorMensal)}</strong>, com
+          vencimento todo dia <strong>{diaPag}</strong> do mês subsequente ao
+          da prestação, via <strong>{forma}</strong>, em conta indicada pela
+          CONTRATADA.
+        </p>
+        <p className="mt-2">
+          O atraso no pagamento sujeitará a CONTRATANTE à multa moratória de{" "}
+          <strong>{multa}%</strong> sobre o valor em atraso, acrescida de juros
+          de <strong>{juros}% ao mês</strong>, calculados pro rata die.
+          {proposal?.indiceReajuste && (
+            <>
+              {" "}Os honorários serão reajustados anualmente pelo índice{" "}
+              <strong>{proposal.indiceReajuste}</strong> ou outro que venha a
+              substituí-lo.
+            </>
+          )}
         </p>
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-semibold">CLÁUSULA 4ª — DA VIGÊNCIA</h2>
+        <h2 className="text-sm font-semibold">CLÁUSULA 4ª — DA VIGÊNCIA E RENOVAÇÃO</h2>
         <p className="mt-2">
-          O presente contrato terá vigência de{" "}
-          <strong>{formatDate(contract.inicioVigencia)}</strong> a{" "}
-          <strong>{formatDate(contract.fimVigencia)}</strong>, sendo renovado
-          automaticamente por iguais períodos, salvo manifestação em contrário
-          de qualquer das partes com antecedência mínima de 30 (trinta) dias do
-          término.
+          O presente contrato terá vigência de <strong>{vigMeses}</strong>{" "}
+          {vigMeses === 1 ? "mês" : "meses"}, iniciando-se em{" "}
+          <strong>{formatDate(contract.inicioVigencia)}</strong> e encerrando-se
+          em <strong>{formatDate(contract.fimVigencia)}</strong>, sendo
+          prorrogado automaticamente por iguais períodos caso nenhuma das
+          partes se manifeste em contrário com antecedência mínima de{" "}
+          <strong>{avisoNaoRenov} dias</strong> do término da vigência. A
+          renovação automática ocorrerá no prazo de{" "}
+          <strong>{renovDias} dias</strong> anteriores ao encerramento.
         </p>
       </section>
 
@@ -260,9 +381,10 @@ export function ContractDocument({
         </h2>
         <p className="mt-2">
           O presente contrato poderá ser rescindido por qualquer das partes
-          mediante aviso prévio por escrito de 30 (trinta) dias. A tolerância
-          quanto ao descumprimento de qualquer cláusula não implicará novação
-          ou renúncia de direitos.
+          mediante aviso prévio por escrito de{" "}
+          <strong>{avisoRescisao} dias</strong>. A tolerância quanto ao
+          descumprimento de qualquer cláusula não implicará novação ou renúncia
+          de direitos.
         </p>
       </section>
 
@@ -271,9 +393,9 @@ export function ContractDocument({
           CLÁUSULA 8ª — DAS DISPOSIÇÕES GERAIS E FORO
         </h2>
         <p className="mt-2">
-          Fica eleito o foro da <strong>{etw.foro}</strong> para dirimir
-          quaisquer questões oriundas deste contrato, com renúncia expressa a
-          qualquer outro, por mais privilegiado que seja.
+          Fica eleito o foro da <strong>{foro}</strong> para dirimir quaisquer
+          questões oriundas deste contrato, com renúncia expressa a qualquer
+          outro, por mais privilegiado que seja.
         </p>
       </section>
 
@@ -283,8 +405,7 @@ export function ContractDocument({
           instrumento em 2 (duas) vias de igual teor e forma.
         </p>
         <p className="mt-2 text-right">
-          {client.cidade || "Goiânia"},{" "}
-          {formatDateLong(contract.inicioVigencia)}.
+          {localAss}, {formatDateLong(dataAss)}.
         </p>
 
         <div className="mt-10 grid grid-cols-2 gap-8">

@@ -64,14 +64,25 @@ export type Database = {
       }
       contracts: {
         Row: {
+          aviso_nao_renovacao_dias: number | null
+          aviso_previo_rescisao_dias: number | null
           client_id: string
           created_at: string
+          data_assinatura: string | null
+          dia_pagamento: number | null
           fim_vigencia: string
+          forma_pagamento: string | null
+          foro: string | null
           id: string
           inicio_vigencia: string
+          juros_mes_percent: number | null
+          local_data_assinatura: string | null
+          multa_moratoria_percent: number | null
           numero: string
           observacoes: string | null
+          prazo_vigencia_meses: number | null
           proposal_id: string | null
+          renovacao_automatica_dias: number | null
           services: Json
           signatarios_cliente_ids: Json
           signatarios_contratada: Json
@@ -79,14 +90,25 @@ export type Database = {
           valor_mensal: number
         }
         Insert: {
+          aviso_nao_renovacao_dias?: number | null
+          aviso_previo_rescisao_dias?: number | null
           client_id: string
           created_at?: string
+          data_assinatura?: string | null
+          dia_pagamento?: number | null
           fim_vigencia: string
+          forma_pagamento?: string | null
+          foro?: string | null
           id: string
           inicio_vigencia: string
+          juros_mes_percent?: number | null
+          local_data_assinatura?: string | null
+          multa_moratoria_percent?: number | null
           numero: string
           observacoes?: string | null
+          prazo_vigencia_meses?: number | null
           proposal_id?: string | null
+          renovacao_automatica_dias?: number | null
           services?: Json
           signatarios_cliente_ids?: Json
           signatarios_contratada?: Json
@@ -94,14 +116,25 @@ export type Database = {
           valor_mensal?: number
         }
         Update: {
+          aviso_nao_renovacao_dias?: number | null
+          aviso_previo_rescisao_dias?: number | null
           client_id?: string
           created_at?: string
+          data_assinatura?: string | null
+          dia_pagamento?: number | null
           fim_vigencia?: string
+          forma_pagamento?: string | null
+          foro?: string | null
           id?: string
           inicio_vigencia?: string
+          juros_mes_percent?: number | null
+          local_data_assinatura?: string | null
+          multa_moratoria_percent?: number | null
           numero?: string
           observacoes?: string | null
+          prazo_vigencia_meses?: number | null
           proposal_id?: string | null
+          renovacao_automatica_dias?: number | null
           services?: Json
           signatarios_cliente_ids?: Json
           signatarios_contratada?: Json
@@ -160,40 +193,64 @@ export type Database = {
       }
       proposals: {
         Row: {
+          assunto: string | null
+          cidade_uf: string | null
           client_id: string
           created_at: string
           data_emissao: string
+          dia_util_entrega: number | null
+          dia_vencimento: number | null
+          forma_pagamento: string | null
           honorarios_mensais: number
           id: string
+          indice_reajuste: string | null
           items: Json
           numero: string
           observacoes: string | null
+          prazo_implementacao_dias: number | null
+          responsavel_cliente_id: string | null
           status: string
           taxa_implantacao: number
           validade_dias: number
         }
         Insert: {
+          assunto?: string | null
+          cidade_uf?: string | null
           client_id: string
           created_at?: string
           data_emissao: string
+          dia_util_entrega?: number | null
+          dia_vencimento?: number | null
+          forma_pagamento?: string | null
           honorarios_mensais?: number
           id: string
+          indice_reajuste?: string | null
           items?: Json
           numero: string
           observacoes?: string | null
+          prazo_implementacao_dias?: number | null
+          responsavel_cliente_id?: string | null
           status?: string
           taxa_implantacao?: number
           validade_dias?: number
         }
         Update: {
+          assunto?: string | null
+          cidade_uf?: string | null
           client_id?: string
           created_at?: string
           data_emissao?: string
+          dia_util_entrega?: number | null
+          dia_vencimento?: number | null
+          forma_pagamento?: string | null
           honorarios_mensais?: number
           id?: string
+          indice_reajuste?: string | null
           items?: Json
           numero?: string
           observacoes?: string | null
+          prazo_implementacao_dias?: number | null
+          responsavel_cliente_id?: string | null
           status?: string
           taxa_implantacao?: number
           validade_dias?: number
@@ -213,9 +270,14 @@ export type Database = {
           cargo: string | null
           client_id: string
           cpf: string
+          data_nascimento: string | null
           email: string | null
+          endereco: string | null
+          estado_civil: string | null
           id: string
+          nacionalidade: string | null
           nome: string
+          profissao: string | null
           rg: string | null
           telefone: string | null
         }
@@ -223,9 +285,14 @@ export type Database = {
           cargo?: string | null
           client_id: string
           cpf: string
+          data_nascimento?: string | null
           email?: string | null
+          endereco?: string | null
+          estado_civil?: string | null
           id: string
+          nacionalidade?: string | null
           nome: string
+          profissao?: string | null
           rg?: string | null
           telefone?: string | null
         }
@@ -233,9 +300,14 @@ export type Database = {
           cargo?: string | null
           client_id?: string
           cpf?: string
+          data_nascimento?: string | null
           email?: string | null
+          endereco?: string | null
+          estado_civil?: string | null
           id?: string
+          nacionalidade?: string | null
           nome?: string
+          profissao?: string | null
           rg?: string | null
           telefone?: string | null
         }

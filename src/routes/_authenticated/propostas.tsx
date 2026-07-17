@@ -249,7 +249,7 @@ function ProposalDialog({
   initial: Proposal | null;
   onSubmit: (data: ProposalFormData) => void;
 }) {
-  const { clients, services } = useApp();
+  const { clients, services, representatives } = useApp();
   const isEdit = !!initial;
 
   // Split initial items into catalog (matches a service id) vs custom
@@ -278,6 +278,16 @@ function ProposalDialog({
   const [selected, setSelected] = useState<Set<string>>(initialCatalogIds);
   const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>(initialCatalogInfo);
   const [custom, setCustom] = useState<ProposalItem[]>(initialCustom);
+  const [assunto, setAssunto] = useState(initial?.assunto ?? "");
+  const [cidadeUf, setCidadeUf] = useState(initial?.cidadeUf ?? "");
+  const [responsavelId, setResponsavelId] = useState(initial?.responsavelClienteId ?? "");
+  const [indiceReajuste, setIndiceReajuste] = useState(initial?.indiceReajuste ?? "IPCA");
+  const [formaPagamento, setFormaPagamento] = useState(initial?.formaPagamento ?? "Boleto bancário");
+  const [diaVencimento, setDiaVencimento] = useState<number | "">(initial?.diaVencimento ?? 5);
+  const [diaUtilEntrega, setDiaUtilEntrega] = useState<number | "">(initial?.diaUtilEntrega ?? "");
+  const [prazoImplantacao, setPrazoImplantacao] = useState<number | "">(initial?.prazoImplementacaoDias ?? "");
+
+  const clientReps = representatives.filter((r) => r.clientId === clientId);
 
   const [cNome, setCNome] = useState("");
   const [cModulo, setCModulo] = useState("Outros");
@@ -370,6 +380,84 @@ function ProposalDialog({
             step="0.01"
             value={implantacao}
             onChange={(e) => setImplantacao(Number(e.target.value))}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <Label>Assunto / objeto da proposta</Label>
+          <Input
+            value={assunto}
+            onChange={(e) => setAssunto(e.target.value)}
+            placeholder="Ex.: Serviços contábeis mensais para o exercício de 2026"
+          />
+        </div>
+        <div>
+          <Label>Cidade/UF de emissão</Label>
+          <Input
+            value={cidadeUf}
+            onChange={(e) => setCidadeUf(e.target.value)}
+            placeholder="Goiânia - GO"
+          />
+        </div>
+        <div>
+          <Label>Responsável do cliente</Label>
+          <Select value={responsavelId || "none"} onValueChange={(v) => setResponsavelId(v === "none" ? "" : v)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">— nenhum —</SelectItem>
+              {clientReps.map((r) => (
+                <SelectItem key={r.id} value={r.id}>
+                  {r.nome}
+                  {r.cargo ? ` — ${r.cargo}` : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Índice de reajuste</Label>
+          <Input
+            value={indiceReajuste}
+            onChange={(e) => setIndiceReajuste(e.target.value)}
+            placeholder="IPCA, IGP-M..."
+          />
+        </div>
+        <div>
+          <Label>Forma de pagamento</Label>
+          <Input
+            value={formaPagamento}
+            onChange={(e) => setFormaPagamento(e.target.value)}
+            placeholder="Boleto, PIX, Transferência..."
+          />
+        </div>
+        <div>
+          <Label>Dia de vencimento</Label>
+          <Input
+            type="number"
+            min={1}
+            max={31}
+            value={diaVencimento}
+            onChange={(e) => setDiaVencimento(e.target.value ? Number(e.target.value) : "")}
+          />
+        </div>
+        <div>
+          <Label>Dia útil de entrega</Label>
+          <Input
+            type="number"
+            min={1}
+            max={25}
+            value={diaUtilEntrega}
+            onChange={(e) => setDiaUtilEntrega(e.target.value ? Number(e.target.value) : "")}
+          />
+        </div>
+        <div>
+          <Label>Prazo de implantação (dias)</Label>
+          <Input
+            type="number"
+            min={0}
+            value={prazoImplantacao}
+            onChange={(e) => setPrazoImplantacao(e.target.value ? Number(e.target.value) : "")}
           />
         </div>
         <div className="sm:col-span-2">
@@ -519,6 +607,14 @@ function ProposalDialog({
               honorariosMensais: honorarios,
               taxaImplantacao: implantacao,
               observacoes: obs,
+              assunto: assunto || undefined,
+              cidadeUf: cidadeUf || undefined,
+              responsavelClienteId: responsavelId || undefined,
+              indiceReajuste: indiceReajuste || undefined,
+              formaPagamento: formaPagamento || undefined,
+              diaVencimento: diaVencimento === "" ? undefined : Number(diaVencimento),
+              diaUtilEntrega: diaUtilEntrega === "" ? undefined : Number(diaUtilEntrega),
+              prazoImplementacaoDias: prazoImplantacao === "" ? undefined : Number(prazoImplantacao),
             });
           }}
         >
