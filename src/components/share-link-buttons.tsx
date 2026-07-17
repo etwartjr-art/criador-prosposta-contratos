@@ -68,6 +68,9 @@ export function ShareLinkButtons({ title, url }: Props) {
         )}
         {copied ? "Copiado" : "Copiar link"}
       </Button>
+      <Button variant="outline" onClick={whatsapp} className="bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#128C7E] border-[#25D366]/30">
+        <MessageCircle className="mr-1 h-4 w-4" /> WhatsApp
+      </Button>
       <Button variant="outline" onClick={email}>
         <Mail className="mr-1 h-4 w-4" /> Enviar por e-mail
       </Button>
