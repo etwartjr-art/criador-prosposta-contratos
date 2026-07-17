@@ -185,6 +185,17 @@ function ProposalsPage() {
                         <Button
                           size="icon"
                           variant="ghost"
+                          title="Editar"
+                          onClick={() => {
+                            setEditing(p);
+                            setOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
                           onClick={() => {
                             if (confirm(`Excluir ${p.numero}?`)) {
                               removeProposal(p.id);
@@ -194,6 +205,7 @@ function ProposalsPage() {
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
+
                       </div>
                     </TableCell>
                   </TableRow>
@@ -207,22 +219,45 @@ function ProposalsPage() {
   );
 }
 
-function NewProposalDialog({
-  onCreate,
+type ProposalFormData = Omit<Proposal, "id" | "numero" | "status" | "createdAt">;
+
+function ProposalDialog({
+  initial,
+  onSubmit,
 }: {
-  onCreate: (data: Omit<Proposal, "id" | "numero" | "status" | "createdAt">) => void;
+  initial: Proposal | null;
+  onSubmit: (data: ProposalFormData) => void;
 }) {
   const { clients, services } = useApp();
-  const [clientId, setClientId] = useState<string>(clients[0]?.id ?? "");
-  const [dataEmissao, setDataEmissao] = useState(today());
-  const [validade, setValidade] = useState(30);
-  const [honorarios, setHonorarios] = useState(0);
-  const [implantacao, setImplantacao] = useState(0);
-  const [obs, setObs] = useState("");
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  // Extra info per catalog service (keyed by service id).
-  const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>({});
-  const [custom, setCustom] = useState<ProposalItem[]>([]);
+  const isEdit = !!initial;
+
+  // Split initial items into catalog (matches a service id) vs custom
+  const initialCatalogIds = new Set<string>();
+  const initialCatalogInfo: Record<string, string> = {};
+  const initialCustom: ProposalItem[] = [];
+  if (initial) {
+    for (const it of initial.items) {
+      if (services.some((s) => s.id === it.serviceId)) {
+        initialCatalogIds.add(it.serviceId);
+        if (it.informacoes) initialCatalogInfo[it.serviceId] = it.informacoes;
+      } else {
+        initialCustom.push(it);
+      }
+    }
+  }
+
+  const [clientId, setClientId] = useState<string>(
+    initial?.clientId ?? clients[0]?.id ?? "",
+  );
+  const [dataEmissao, setDataEmissao] = useState(initial?.dataEmissao ?? today());
+  const [validade, setValidade] = useState(initial?.validadeDias ?? 30);
+  const [honorarios, setHonorarios] = useState(initial?.honorariosMensais ?? 0);
+  const [implantacao, setImplantacao] = useState(initial?.taxaImplantacao ?? 0);
+  const [obs, setObs] = useState(initial?.observacoes ?? "");
+  const [selected, setSelected] = useState<Set<string>>(initialCatalogIds);
+  const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>(initialCatalogInfo);
+  const [custom, setCustom] = useState<ProposalItem[]>(initialCustom);
+
   const [cNome, setCNome] = useState("");
   const [cModulo, setCModulo] = useState("Outros");
   const [cDesc, setCDesc] = useState("");
