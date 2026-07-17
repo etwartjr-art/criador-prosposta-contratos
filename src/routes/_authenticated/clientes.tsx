@@ -362,6 +362,11 @@ function RepresentativesDialog({
     cargo: "",
     email: "",
     telefone: "",
+    nacionalidade: "Brasileiro(a)",
+    estadoCivil: "",
+    profissao: "",
+    dataNascimento: "",
+    endereco: "",
   });
 
   return (
