@@ -349,7 +349,14 @@ export const useApp = create<State>()((set, get) => ({
   addRep: (r) => {
     const rep: Representative = { ...r, id: nanoid() };
     set({ representatives: [...get().representatives, rep] });
-    bg("representante", supabase.from("representatives").insert(repToRow(rep)));
+    bg(
+      "representante",
+      supabase.from("representatives").insert(repToRow(rep)),
+      () =>
+        set({
+          representatives: get().representatives.filter((r) => r.id !== rep.id),
+        }),
+    );
     return rep;
   },
   updateRep: (id, patch) => {
