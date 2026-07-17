@@ -364,6 +364,11 @@ function NewProposalDialog({
                       {it.modulo}
                       {it.descricao ? ` · ${it.descricao}` : ""}
                     </div>
+                    {it.informacoes && (
+                      <div className="mt-1 text-xs italic text-muted-foreground">
+                        Info: {it.informacoes}
+                      </div>
+                    )}
                   </div>
                   <Button
                     size="icon"
@@ -394,6 +399,13 @@ function NewProposalDialog({
               placeholder="Descrição / escopo (opcional)"
               value={cDesc}
               onChange={(e) => setCDesc(e.target.value)}
+            />
+            <Textarea
+              rows={2}
+              className="sm:col-span-2"
+              placeholder="Informações adicionais (opcional): valores, prazos, dados específicos, particularidades..."
+              value={cInfo}
+              onChange={(e) => setCInfo(e.target.value)}
             />
             <div className="sm:col-span-2">
               <Button type="button" variant="outline" onClick={addCustom}>
