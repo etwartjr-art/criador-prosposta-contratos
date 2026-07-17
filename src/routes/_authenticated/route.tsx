@@ -1,10 +1,10 @@
 import {
   Outlet,
   createFileRoute,
-  redirect,
+  useNavigate,
   useRouterState,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppSidebar } from "@/components/app-sidebar";
@@ -17,15 +17,9 @@ import { useApp } from "@/store/app";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session) {
-      throw redirect({ to: "/auth" });
-    }
-    return { user: data.session.user };
-  },
   component: AuthedShell,
 });
+
 
 function PageTitle() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
