@@ -94,7 +94,13 @@ function ProposalsPage() {
         title="Propostas / Orçamentos"
         description="Escopo, valores e condições comerciais das propostas enviadas aos clientes."
         actions={
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
+          <Dialog open={open} onOpenChange={(v) => {
+            setOpen(v);
+            if (!v) {
+              setEditing(null);
+              if (editId) navigate({ to: "/propostas", search: {} });
+            }
+          }}>
             <DialogTrigger asChild>
               <Button disabled={clients.length === 0} onClick={() => setEditing(null)}>
                 <Plus className="mr-1 h-4 w-4" /> Nova proposta
