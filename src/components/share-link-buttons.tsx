@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Share2, Mail } from "lucide-react";
+import { Copy, Check, Share2, Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 type Props = { title: string; url?: string };
@@ -51,6 +51,13 @@ export function ShareLinkButtons({ title, url }: Props) {
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
+  const whatsapp = () => {
+    const text = encodeURIComponent(
+      `Olá! 👋\n\nSegue o link do documento *${title}* da ETW Art Contabilidade:\n${link}\n\nQualquer dúvida, estamos à disposição.`
+    );
+    window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <>
       <Button variant="outline" onClick={copy} title={link}>
@@ -60,6 +67,9 @@ export function ShareLinkButtons({ title, url }: Props) {
           <Copy className="mr-1 h-4 w-4" />
         )}
         {copied ? "Copiado" : "Copiar link"}
+      </Button>
+      <Button variant="outline" onClick={whatsapp} className="bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#128C7E] border-[#25D366]/30">
+        <MessageCircle className="mr-1 h-4 w-4" /> WhatsApp
       </Button>
       <Button variant="outline" onClick={email}>
         <Mail className="mr-1 h-4 w-4" /> Enviar por e-mail
