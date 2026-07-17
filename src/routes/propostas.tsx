@@ -201,10 +201,13 @@ function NewProposalDialog({
   const [implantacao, setImplantacao] = useState(0);
   const [obs, setObs] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  // Extra info per catalog service (keyed by service id).
+  const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>({});
   const [custom, setCustom] = useState<ProposalItem[]>([]);
   const [cNome, setCNome] = useState("");
   const [cModulo, setCModulo] = useState("Outros");
   const [cDesc, setCDesc] = useState("");
+  const [cInfo, setCInfo] = useState("");
 
   const toggle = (id: string) => {
     const n = new Set(selected);
@@ -225,10 +228,12 @@ function NewProposalDialog({
         nome: cNome.trim(),
         modulo: cModulo || "Outros",
         descricao: cDesc.trim(),
+        informacoes: cInfo.trim() || undefined,
       },
     ]);
     setCNome("");
     setCDesc("");
+    setCInfo("");
     setCModulo("Outros");
   };
 
@@ -301,24 +306,40 @@ function NewProposalDialog({
             Serviços do catálogo ({selected.size} selecionado
             {selected.size === 1 ? "" : "s"})
           </Label>
-          <div className="mt-2 max-h-56 space-y-1 overflow-y-auto rounded-md border border-border p-2">
-            {services.map((s) => (
-              <label
-                key={s.id}
-                className="flex cursor-pointer items-start gap-2 rounded p-2 hover:bg-muted"
-              >
-                <Checkbox
-                  checked={selected.has(s.id)}
-                  onCheckedChange={() => toggle(s.id)}
-                />
-                <div className="flex-1">
-                  <div className="text-sm font-medium">{s.nome}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {s.modulo} · {s.descricaoEscopo}
-                  </div>
+          <div className="mt-2 max-h-72 space-y-1 overflow-y-auto rounded-md border border-border p-2">
+            {services.map((s) => {
+              const checked = selected.has(s.id);
+              return (
+                <div key={s.id} className="rounded p-2 hover:bg-muted">
+                  <label className="flex cursor-pointer items-start gap-2">
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={() => toggle(s.id)}
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium">{s.nome}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {s.modulo} · {s.descricaoEscopo}
+                      </div>
+                    </div>
+                  </label>
+                  {checked && (
+                    <Textarea
+                      rows={2}
+                      className="mt-2 text-xs"
+                      placeholder="Informações adicionais para este serviço (opcional): valores, prazos, particularidades, dados do cliente..."
+                      value={catalogInfo[s.id] ?? ""}
+                      onChange={(e) =>
+                        setCatalogInfo({
+                          ...catalogInfo,
+                          [s.id]: e.target.value,
+                        })
+                      }
+                    />
+                  )}
                 </div>
-              </label>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -343,6 +364,11 @@ function NewProposalDialog({
                       {it.modulo}
                       {it.descricao ? ` · ${it.descricao}` : ""}
                     </div>
+                    {it.informacoes && (
+                      <div className="mt-1 text-xs italic text-muted-foreground">
+                        Info: {it.informacoes}
+                      </div>
+                    )}
                   </div>
                   <Button
                     size="icon"
@@ -374,6 +400,13 @@ function NewProposalDialog({
               value={cDesc}
               onChange={(e) => setCDesc(e.target.value)}
             />
+            <Textarea
+              rows={2}
+              className="sm:col-span-2"
+              placeholder="Informações adicionais (opcional): valores, prazos, dados específicos, particularidades..."
+              value={cInfo}
+              onChange={(e) => setCInfo(e.target.value)}
+            />
             <div className="sm:col-span-2">
               <Button type="button" variant="outline" onClick={addCustom}>
                 <Plus className="mr-1 h-4 w-4" /> Adicionar processo
@@ -393,12 +426,16 @@ function NewProposalDialog({
             }
             const catalogItems: ProposalItem[] = services
               .filter((s) => selected.has(s.id))
-              .map((s) => ({
-                serviceId: s.id,
-                nome: s.nome,
-                modulo: s.modulo,
-                descricao: s.descricaoEscopo,
-              }));
+              .map((s) => {
+                const info = catalogInfo[s.id]?.trim();
+                return {
+                  serviceId: s.id,
+                  nome: s.nome,
+                  modulo: s.modulo,
+                  descricao: s.descricaoEscopo,
+                  informacoes: info || undefined,
+                };
+              });
             onCreate({
               clientId,
               dataEmissao,
