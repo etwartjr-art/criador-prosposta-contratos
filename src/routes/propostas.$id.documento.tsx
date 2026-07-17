@@ -5,6 +5,7 @@ import { useApp } from "@/store/app";
 import { ProposalDocument } from "@/components/documents";
 import { ArrowLeft, Printer, Download } from "lucide-react";
 import { downloadElementAsPdf } from "@/lib/download-pdf";
+import { ShareLinkButtons } from "@/components/share-link-buttons";
 
 export const Route = createFileRoute("/propostas/$id/documento")({
   component: ProposalDocumentPage,
@@ -43,7 +44,8 @@ function ProposalDocumentPage() {
             <ArrowLeft className="mr-1 h-4 w-4" /> Voltar à proposta
           </Link>
         </Button>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <ShareLinkButtons title={`Proposta ${proposal.numero}`} />
           <Button variant="outline" onClick={() => window.print()}>
             <Printer className="mr-1 h-4 w-4" /> Imprimir
           </Button>
