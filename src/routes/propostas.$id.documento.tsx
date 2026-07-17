@@ -41,11 +41,18 @@ function ProposalDocumentPage() {
     if (proposal) document.title = `Proposta ${proposal.numero}`;
   }, [proposal]);
 
+  if (!authChecked) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Verificando acesso…</div>
+    );
+  }
+
   if (!hydrated) {
     return (
       <div className="p-6 text-sm text-muted-foreground">Carregando documento…</div>
     );
   }
+
 
   if (!proposal || !client) {
     return (
