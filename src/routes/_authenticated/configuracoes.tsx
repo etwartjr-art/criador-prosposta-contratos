@@ -20,7 +20,7 @@ function SettingsPage() {
 
   const save = () => {
     updateEtw(local);
-    toast.success("Dados da ETW Art atualizados");
+    toast.success("Dados da Etw Art atualizados");
   };
 
   return (
