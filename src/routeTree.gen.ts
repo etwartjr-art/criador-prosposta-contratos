@@ -18,6 +18,7 @@ import { Route as AuthenticatedContratosRouteImport } from './routes/_authentica
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
 import { Route as PropostasIdDocumentoRouteImport } from './routes/propostas.$id.documento'
+import { Route as ContratosIdDocumentoRouteImport } from './routes/contratos.$id.documento'
 import { Route as AuthenticatedPropostasIdRouteImport } from './routes/_authenticated/propostas.$id'
 import { Route as AuthenticatedContratosIdRouteImport } from './routes/_authenticated/contratos.$id'
 
@@ -66,6 +67,11 @@ const PropostasIdDocumentoRoute = PropostasIdDocumentoRouteImport.update({
   path: '/propostas/$id/documento',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContratosIdDocumentoRoute = ContratosIdDocumentoRouteImport.update({
+  id: '/contratos/$id/documento',
+  path: '/contratos/$id/documento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPropostasIdRoute =
   AuthenticatedPropostasIdRouteImport.update({
     id: '/$id',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/servicos': typeof AuthenticatedServicosRoute
   '/contratos/$id': typeof AuthenticatedContratosIdRoute
   '/propostas/$id': typeof AuthenticatedPropostasIdRoute
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
   '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesByTo {
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/contratos/$id': typeof AuthenticatedContratosIdRoute
   '/propostas/$id': typeof AuthenticatedPropostasIdRoute
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
   '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesById {
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/contratos/$id': typeof AuthenticatedContratosIdRoute
   '/_authenticated/propostas/$id': typeof AuthenticatedPropostasIdRoute
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
   '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRouteTypes {
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/contratos/$id/documento'
     | '/propostas/$id/documento'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/contratos/$id/documento'
     | '/propostas/$id/documento'
   id:
     | '__root__'
@@ -154,12 +165,14 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/contratos/$id'
     | '/_authenticated/propostas/$id'
+    | '/contratos/$id/documento'
     | '/propostas/$id/documento'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ContratosIdDocumentoRoute: typeof ContratosIdDocumentoRoute
   PropostasIdDocumentoRoute: typeof PropostasIdDocumentoRoute
 }
 
@@ -226,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/propostas/$id/documento'
       fullPath: '/propostas/$id/documento'
       preLoaderRoute: typeof PropostasIdDocumentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contratos/$id/documento': {
+      id: '/contratos/$id/documento'
+      path: '/contratos/$id/documento'
+      fullPath: '/contratos/$id/documento'
+      preLoaderRoute: typeof ContratosIdDocumentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/propostas/$id': {
@@ -297,6 +317,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ContratosIdDocumentoRoute: ContratosIdDocumentoRoute,
   PropostasIdDocumentoRoute: PropostasIdDocumentoRoute,
 }
 export const routeTree = rootRouteImport
