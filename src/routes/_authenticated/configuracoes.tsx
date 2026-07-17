@@ -20,7 +20,7 @@ function SettingsPage() {
 
   const save = () => {
     updateEtw(local);
-    toast.success("Dados da ETW Art atualizados");
+    toast.success("Dados da Etw Art atualizados");
   };
 
   return (
@@ -33,7 +33,7 @@ function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Dados da ETW Art Contabilidade</CardTitle>
+          <CardTitle className="text-base">Dados da Etw Art Contabilidade</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">

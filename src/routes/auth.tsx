@@ -66,7 +66,7 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>ETW Art — Contratos</CardTitle>
+          <CardTitle>Etw Art&nbsp; Contabilidade — Contratos e Proposta</CardTitle>
           <CardDescription>Acesse com sua conta para continuar.</CardDescription>
         </CardHeader>
         <CardContent>

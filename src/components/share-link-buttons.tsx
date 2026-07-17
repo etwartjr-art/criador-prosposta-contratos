@@ -46,14 +46,14 @@ export function ShareLinkButtons({ title, url }: Props) {
   const email = () => {
     const subject = encodeURIComponent(title);
     const body = encodeURIComponent(
-      `Olá,\n\nSegue o link do documento "${title}":\n${link}\n\nAtenciosamente,\nETW Art Contabilidade`
+      `Olá,\n\nSegue o link do documento "${title}":\n${link}\n\nAtenciosamente,\nEtw Art Contabilidade`
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
   const whatsapp = () => {
     const text = encodeURIComponent(
-      `Olá! 👋\n\nSegue o link do documento *${title}* da ETW Art Contabilidade:\n${link}\n\nQualquer dúvida, estamos à disposição.`
+      `Olá! 👋\n\nSegue o link do documento *${title}* da Etw Art Contabilidade:\n${link}\n\nQualquer dúvida, estamos à disposição.`
     );
     window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
   };
