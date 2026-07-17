@@ -18,6 +18,7 @@ import {
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import { useApp } from "@/store/app";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -155,11 +156,20 @@ function PageTitle() {
   return <span className="text-sm font-medium text-foreground">{title}</span>;
 }
 
+function StoreHydrator() {
+  const hydrate = useApp((s) => s.hydrate);
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <StoreHydrator />
       <SidebarProvider>
         <div className="flex min-h-screen w-full bg-background">
           <AppSidebar />

@@ -1,83 +1,42 @@
-# Sistema de Contratos e Orçamentos — ETW Art Contabilidade
+## Objetivo
 
-MVP focado em interface (sem login), com dados persistidos localmente no navegador (localStorage) para permitir testar todos os fluxos sem backend. Posteriormente podemos migrar para Lovable Cloud.
+Hoje os dados (clientes, propostas, contratos, serviços, configurações da ETW) ficam salvos apenas no navegador de cada visitante via localStorage. Ao publicar, cada pessoa vê um banco vazio. Vamos mover tudo para o banco do Lovable Cloud, para que os dados persistam de verdade e sejam acessíveis de qualquer dispositivo.
 
-## Passo 0 — Ler a página do Notion
+## Aviso importante sobre acesso
 
-Antes de escrever código, vou conectar o Notion (App Connector do workspace) e ler a página `Sistema-de-Contratos-e-Orçamentos-ETW-Art-Contabilidade` para extrair:
-- Campos obrigatórios de cliente (PF/PJ, dados fiscais específicos de contabilidade)
-- Tipos de serviços/pacotes contábeis e forma de precificação
-- Modelo/cláusulas do contrato e do orçamento usados hoje pela ETW
+Como você escolheu **sem login**, o sistema publicado será acessível por qualquer pessoa com o link, e todos verão/editarão os mesmos dados. Se em algum momento quiser proteger com senha, é só pedir que eu adiciono autenticação.
 
-O plano abaixo será refinado com o que estiver na página (nomes de campos, textos padrão, tabela de honorários, etc.). Se algo essencial faltar, pergunto antes de codar.
+## O que será feito
 
-## Escopo do MVP (confirmado)
+1. **Criar tabelas no banco** (migration única):
+   - `etw_settings` (linha única com dados da ETW)
+   - `clients` + `representatives` (com FK)
+   - `services` (catálogo)
+   - `proposals` + itens embutidos em JSONB
+   - `contracts` + itens/signatários embutidos em JSONB
+   - Sequências para numeração automática (`PROP-YYYY-NNNN`, `CONT-YYYY-NNNN`)
+   - Seed inicial: configurações da ETW + 10 serviços do catálogo padrão
 
-1. Cadastro de clientes (PF e PJ)
-2. Criação de orçamentos
-3. Geração de contratos em PDF
-4. Assinatura/aprovação do cliente via link público
+2. **Políticas de acesso**: RLS aberta para `anon` (leitura/escrita), já que não há login. Documentado como decisão consciente.
 
-## Estrutura de rotas (TanStack Start)
+3. **Refatorar `src/store/app.ts`**: trocar Zustand+persist por hooks TanStack Query que leem/escrevem no Supabase. API dos componentes permanece a mesma (`addClient`, `updateProposal`, `approveProposal` etc.) para não mexer nas telas.
 
-```text
-/                       Dashboard (resumo: nº clientes, orçamentos, contratos)
-/clientes               Lista + busca
-/clientes/novo          Formulário PF/PJ
-/clientes/$id           Detalhe + edição
-/orcamentos             Lista com status (rascunho/enviado/aprovado/recusado)
-/orcamentos/novo        Wizard: cliente → serviços/itens → condições → revisão
-/orcamentos/$id         Detalhe, editar, gerar PDF, converter em contrato
-/contratos              Lista com status (rascunho/enviado/assinado/cancelado)
-/contratos/novo         A partir de orçamento aprovado OU do zero
-/contratos/$id          Detalhe, editar cláusulas, gerar PDF, enviar link
-/aprovacao/$token       Página pública: cliente vê orçamento/contrato e aceita
-```
+4. **Migração de dados existentes**: incluir um botão discreto em Configurações "Importar dados do navegador" que envia o que estiver no localStorage atual para o banco (one-shot).
 
-## Módulos principais
+5. **Ajustes de UX**: estados de loading nas listas, toasts de erro em falhas de rede.
 
-**Clientes** — PF (nome, CPF, RG, endereço, contato) e PJ (razão social, nome fantasia, CNPJ, IE, regime tributário, sócios, endereço, contato). Campos exatos virão do Notion.
+## Arquivos afetados
 
-**Serviços/Pacotes** — catálogo editável (ex.: Abertura de empresa, Contabilidade mensal Simples/Lucro Presumido, Departamento pessoal por funcionário, IRPF, etc.), com valor unitário e recorrência (única/mensal).
+- Nova migration SQL (tabelas + grants + RLS + seed)
+- `src/store/app.ts` — reescrito para usar Supabase via TanStack Query
+- `src/lib/types.ts` — pequenos ajustes para casar com colunas do banco
+- Rotas (`clientes`, `servicos`, `propostas*`, `contratos*`, `configuracoes`, `index`) — trocar leituras síncronas por `useQuery`, adicionar estados de loading
+- `src/routes/configuracoes.tsx` — botão "Importar dados do navegador"
 
-**Orçamentos** — cabeçalho (cliente, data, validade), itens (serviço, qtd, valor, recorrência), totais (mensal + único), observações, status. Ação "Aprovar" gera contrato.
+## Fora do escopo
 
-**Contratos** — gerado a partir do orçamento; template com variáveis (dados do cliente, itens, valores, prazo, foro). Editor de cláusulas por contrato. Status e histórico.
+- Login/autenticação de usuários
+- Upload de arquivos/logos para storage
+- Assinatura digital
 
-**Aprovação pública** — link com token (UUID) por orçamento/contrato. Cliente vê PDF/preview + botões Aceitar/Recusar; aceite grava nome, CPF, IP-mock, data/hora e "assinatura" digitada.
-
-**Geração de PDF** — client-side com `@react-pdf/renderer` (templates React → PDF, sem servidor). Layout com identidade ETW (cores/logo a definir com o usuário).
-
-## Design
-
-Interface administrativa limpa, tipografia sóbria (adequada a contabilidade), sidebar fixa com navegação por módulo, tabelas densas, formulários em cards. Paleta neutra + um accent — vou propor a paleta com base em qualquer identidade visual mencionada na página do Notion; se não houver, sugiro 2 direções antes de codar o visual.
-
-## Persistência (MVP sem login)
-
-Zustand + `persist` em localStorage para clientes, serviços, orçamentos, contratos e aprovações. Isolado em `src/store/*`. Migração futura para Lovable Cloud mantém a mesma API de hooks.
-
-## Stack e libs a adicionar
-
-- `zustand` (estado + persist)
-- `@react-pdf/renderer` (geração de PDF client-side)
-- `react-hook-form` + `zod` (formulários e validação, incluindo CPF/CNPJ)
-- `date-fns` (datas)
-- Já disponíveis: TanStack Router/Query, Tailwind v4, shadcn/ui
-
-## Entregas por fase
-
-1. Conectar Notion, ler página, ajustar este plano com os campos/textos reais
-2. Layout base (sidebar, header, dashboard vazio) + design tokens
-3. Módulo Clientes (CRUD completo)
-4. Catálogo de Serviços + módulo Orçamentos com PDF
-5. Módulo Contratos com template + PDF
-6. Fluxo de aprovação pública por token
-
-## Perguntas em aberto (respondo com o que vier do Notion; caso contrário, pergunto)
-
-- Identidade visual (logo, cores) da ETW Art
-- Modelo de contrato/cláusulas padrão
-- Tabela de honorários / lista de serviços
-- Numeração de orçamento/contrato (formato desejado)
-
-Aprove para eu conectar o Notion e começar pela fase 1.
+Confirma que posso seguir?
