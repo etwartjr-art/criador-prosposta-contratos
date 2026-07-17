@@ -47,7 +47,8 @@ function ContractDocumentPage() {
             <ArrowLeft className="mr-1 h-4 w-4" /> Voltar ao contrato
           </Link>
         </Button>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <ShareLinkButtons title={`Contrato ${contract.numero}`} />
           <Button variant="outline" onClick={() => window.print()}>
             <Printer className="mr-1 h-4 w-4" /> Imprimir
           </Button>
