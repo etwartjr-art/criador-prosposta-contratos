@@ -163,6 +163,15 @@ function ProposalsPage() {
                             <FileText className="mr-1 h-3 w-3" /> Abrir
                           </Link>
                         </Button>
+                        <Button size="sm" variant="ghost" asChild>
+                          <a
+                            href={`/propostas/${p.id}/documento`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <Eye className="mr-1 h-3 w-3" /> Documento
+                          </a>
+                        </Button>
                         <Button
                           size="icon"
                           variant="ghost"
