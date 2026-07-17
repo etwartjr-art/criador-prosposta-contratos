@@ -46,7 +46,7 @@ export function ShareLinkButtons({ title, url }: Props) {
   const email = () => {
     const subject = encodeURIComponent(title);
     const body = encodeURIComponent(
-      `Olá,\n\nSegue o link do documento "${title}":\n${link}\n\nAtenciosamente,\nETW Art Contabilidade`
+      `Olá,\n\nSegue o link do documento "${title}":\n${link}\n\nAtenciosamente,\nEtw Art Contabilidade`
     );
     window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
