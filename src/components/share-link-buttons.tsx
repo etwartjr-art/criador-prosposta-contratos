@@ -53,7 +53,7 @@ export function ShareLinkButtons({ title, url }: Props) {
 
   const whatsapp = () => {
     const text = encodeURIComponent(
-      `Olá! 👋\n\nSegue o link do documento *${title}* da ETW Art Contabilidade:\n${link}\n\nQualquer dúvida, estamos à disposição.`
+      `Olá! 👋\n\nSegue o link do documento *${title}* da Etw Art Contabilidade:\n${link}\n\nQualquer dúvida, estamos à disposição.`
     );
     window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
   };
