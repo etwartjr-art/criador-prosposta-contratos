@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, FileText, Trash2 } from "lucide-react";
+import { Plus, FileText, Trash2, Eye } from "lucide-react";
 import { useApp } from "@/store/app";
 import type { Proposal, ProposalItem, ProposalStatus } from "@/lib/types";
 import { brl, formatDate, isExpired, today } from "@/lib/format";
@@ -162,6 +162,15 @@ function ProposalsPage() {
                           <Link to="/propostas/$id" params={{ id: p.id }}>
                             <FileText className="mr-1 h-3 w-3" /> Abrir
                           </Link>
+                        </Button>
+                        <Button size="sm" variant="ghost" asChild>
+                          <a
+                            href={`/propostas/${p.id}/documento`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <Eye className="mr-1 h-3 w-3" /> Documento
+                          </a>
                         </Button>
                         <Button
                           size="icon"

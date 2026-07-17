@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Printer, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Printer, CheckCircle2, Eye } from "lucide-react";
 import type { ContractStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/contratos/$id")({
@@ -108,6 +108,15 @@ function ContractDetail() {
                   <SelectItem value="Rescindido">Rescindido</SelectItem>
                 </SelectContent>
               </Select>
+              <Button variant="outline" asChild>
+                <a
+                  href={`/contratos/${contract.id}/documento`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Eye className="mr-1 h-4 w-4" /> Ver documento
+                </a>
+              </Button>
               <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-1 h-4 w-4" /> Imprimir / PDF
               </Button>

@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { brl, formatDate } from "@/lib/format";
-import { FileSignature, Trash2 } from "lucide-react";
+import { FileSignature, Trash2, Eye } from "lucide-react";
 import type { ContractStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/contratos")({
@@ -93,6 +93,15 @@ function ContractsPage() {
                           <Link to="/contratos/$id" params={{ id: c.id }}>
                             <FileSignature className="mr-1 h-3 w-3" /> Abrir
                           </Link>
+                        </Button>
+                        <Button size="sm" variant="ghost" asChild>
+                          <a
+                            href={`/contratos/${c.id}/documento`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <Eye className="mr-1 h-3 w-3" /> Documento
+                          </a>
                         </Button>
                         <Button
                           size="icon"
