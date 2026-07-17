@@ -47,6 +47,8 @@ export interface ProposalItem {
   nome: string;
   modulo: string;
   descricao: string;
+  /** Informações/observações adicionais específicas desta proposta ou contrato. */
+  informacoes?: string;
 }
 
 export type ProposalStatus =
