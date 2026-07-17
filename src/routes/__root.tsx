@@ -198,6 +198,7 @@ function RootComponent() {
           </SidebarInset>
         </div>
         <Toaster richColors position="top-right" />
+        <InstallPrompt />
       </SidebarProvider>
     </QueryClientProvider>
   );
