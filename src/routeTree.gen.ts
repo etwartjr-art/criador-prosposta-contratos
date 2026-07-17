@@ -17,10 +17,10 @@ import { Route as AuthenticatedPropostasRouteImport } from './routes/_authentica
 import { Route as AuthenticatedContratosRouteImport } from './routes/_authenticated/contratos'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedClientesRouteImport } from './routes/_authenticated/clientes'
+import { Route as PropostasIdDocumentoRouteImport } from './routes/propostas.$id.documento'
+import { Route as ContratosIdDocumentoRouteImport } from './routes/contratos.$id.documento'
 import { Route as AuthenticatedPropostasIdRouteImport } from './routes/_authenticated/propostas.$id'
 import { Route as AuthenticatedContratosIdRouteImport } from './routes/_authenticated/contratos.$id'
-import { Route as AuthenticatedPropostasIdDocumentoRouteImport } from './routes/_authenticated/propostas.$id.documento'
-import { Route as AuthenticatedContratosIdDocumentoRouteImport } from './routes/_authenticated/contratos.$id.documento'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -62,6 +62,16 @@ const AuthenticatedClientesRoute = AuthenticatedClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const PropostasIdDocumentoRoute = PropostasIdDocumentoRouteImport.update({
+  id: '/propostas/$id/documento',
+  path: '/propostas/$id/documento',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContratosIdDocumentoRoute = ContratosIdDocumentoRouteImport.update({
+  id: '/contratos/$id/documento',
+  path: '/contratos/$id/documento',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPropostasIdRoute =
   AuthenticatedPropostasIdRouteImport.update({
     id: '/$id',
@@ -74,18 +84,6 @@ const AuthenticatedContratosIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedContratosRoute,
   } as any)
-const AuthenticatedPropostasIdDocumentoRoute =
-  AuthenticatedPropostasIdDocumentoRouteImport.update({
-    id: '/documento',
-    path: '/documento',
-    getParentRoute: () => AuthenticatedPropostasIdRoute,
-  } as any)
-const AuthenticatedContratosIdDocumentoRoute =
-  AuthenticatedContratosIdDocumentoRouteImport.update({
-    id: '/documento',
-    path: '/documento',
-    getParentRoute: () => AuthenticatedContratosIdRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -95,10 +93,10 @@ export interface FileRoutesByFullPath {
   '/contratos': typeof AuthenticatedContratosRouteWithChildren
   '/propostas': typeof AuthenticatedPropostasRouteWithChildren
   '/servicos': typeof AuthenticatedServicosRoute
-  '/contratos/$id': typeof AuthenticatedContratosIdRouteWithChildren
-  '/propostas/$id': typeof AuthenticatedPropostasIdRouteWithChildren
-  '/contratos/$id/documento': typeof AuthenticatedContratosIdDocumentoRoute
-  '/propostas/$id/documento': typeof AuthenticatedPropostasIdDocumentoRoute
+  '/contratos/$id': typeof AuthenticatedContratosIdRoute
+  '/propostas/$id': typeof AuthenticatedPropostasIdRoute
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
+  '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
@@ -108,10 +106,10 @@ export interface FileRoutesByTo {
   '/propostas': typeof AuthenticatedPropostasRouteWithChildren
   '/servicos': typeof AuthenticatedServicosRoute
   '/': typeof AuthenticatedIndexRoute
-  '/contratos/$id': typeof AuthenticatedContratosIdRouteWithChildren
-  '/propostas/$id': typeof AuthenticatedPropostasIdRouteWithChildren
-  '/contratos/$id/documento': typeof AuthenticatedContratosIdDocumentoRoute
-  '/propostas/$id/documento': typeof AuthenticatedPropostasIdDocumentoRoute
+  '/contratos/$id': typeof AuthenticatedContratosIdRoute
+  '/propostas/$id': typeof AuthenticatedPropostasIdRoute
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
+  '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -123,10 +121,10 @@ export interface FileRoutesById {
   '/_authenticated/propostas': typeof AuthenticatedPropostasRouteWithChildren
   '/_authenticated/servicos': typeof AuthenticatedServicosRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/contratos/$id': typeof AuthenticatedContratosIdRouteWithChildren
-  '/_authenticated/propostas/$id': typeof AuthenticatedPropostasIdRouteWithChildren
-  '/_authenticated/contratos/$id/documento': typeof AuthenticatedContratosIdDocumentoRoute
-  '/_authenticated/propostas/$id/documento': typeof AuthenticatedPropostasIdDocumentoRoute
+  '/_authenticated/contratos/$id': typeof AuthenticatedContratosIdRoute
+  '/_authenticated/propostas/$id': typeof AuthenticatedPropostasIdRoute
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
+  '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -167,13 +165,15 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/contratos/$id'
     | '/_authenticated/propostas/$id'
-    | '/_authenticated/contratos/$id/documento'
-    | '/_authenticated/propostas/$id/documento'
+    | '/contratos/$id/documento'
+    | '/propostas/$id/documento'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ContratosIdDocumentoRoute: typeof ContratosIdDocumentoRoute
+  PropostasIdDocumentoRoute: typeof PropostasIdDocumentoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -234,6 +234,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/propostas/$id/documento': {
+      id: '/propostas/$id/documento'
+      path: '/propostas/$id/documento'
+      fullPath: '/propostas/$id/documento'
+      preLoaderRoute: typeof PropostasIdDocumentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contratos/$id/documento': {
+      id: '/contratos/$id/documento'
+      path: '/contratos/$id/documento'
+      fullPath: '/contratos/$id/documento'
+      preLoaderRoute: typeof ContratosIdDocumentoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/propostas/$id': {
       id: '/_authenticated/propostas/$id'
       path: '/$id'
@@ -248,45 +262,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedContratosIdRouteImport
       parentRoute: typeof AuthenticatedContratosRoute
     }
-    '/_authenticated/propostas/$id/documento': {
-      id: '/_authenticated/propostas/$id/documento'
-      path: '/documento'
-      fullPath: '/propostas/$id/documento'
-      preLoaderRoute: typeof AuthenticatedPropostasIdDocumentoRouteImport
-      parentRoute: typeof AuthenticatedPropostasIdRoute
-    }
-    '/_authenticated/contratos/$id/documento': {
-      id: '/_authenticated/contratos/$id/documento'
-      path: '/documento'
-      fullPath: '/contratos/$id/documento'
-      preLoaderRoute: typeof AuthenticatedContratosIdDocumentoRouteImport
-      parentRoute: typeof AuthenticatedContratosIdRoute
-    }
   }
 }
-
-interface AuthenticatedContratosIdRouteChildren {
-  AuthenticatedContratosIdDocumentoRoute: typeof AuthenticatedContratosIdDocumentoRoute
-}
-
-const AuthenticatedContratosIdRouteChildren: AuthenticatedContratosIdRouteChildren =
-  {
-    AuthenticatedContratosIdDocumentoRoute:
-      AuthenticatedContratosIdDocumentoRoute,
-  }
-
-const AuthenticatedContratosIdRouteWithChildren =
-  AuthenticatedContratosIdRoute._addFileChildren(
-    AuthenticatedContratosIdRouteChildren,
-  )
 
 interface AuthenticatedContratosRouteChildren {
-  AuthenticatedContratosIdRoute: typeof AuthenticatedContratosIdRouteWithChildren
+  AuthenticatedContratosIdRoute: typeof AuthenticatedContratosIdRoute
 }
 
 const AuthenticatedContratosRouteChildren: AuthenticatedContratosRouteChildren =
   {
-    AuthenticatedContratosIdRoute: AuthenticatedContratosIdRouteWithChildren,
+    AuthenticatedContratosIdRoute: AuthenticatedContratosIdRoute,
   }
 
 const AuthenticatedContratosRouteWithChildren =
@@ -294,28 +279,13 @@ const AuthenticatedContratosRouteWithChildren =
     AuthenticatedContratosRouteChildren,
   )
 
-interface AuthenticatedPropostasIdRouteChildren {
-  AuthenticatedPropostasIdDocumentoRoute: typeof AuthenticatedPropostasIdDocumentoRoute
-}
-
-const AuthenticatedPropostasIdRouteChildren: AuthenticatedPropostasIdRouteChildren =
-  {
-    AuthenticatedPropostasIdDocumentoRoute:
-      AuthenticatedPropostasIdDocumentoRoute,
-  }
-
-const AuthenticatedPropostasIdRouteWithChildren =
-  AuthenticatedPropostasIdRoute._addFileChildren(
-    AuthenticatedPropostasIdRouteChildren,
-  )
-
 interface AuthenticatedPropostasRouteChildren {
-  AuthenticatedPropostasIdRoute: typeof AuthenticatedPropostasIdRouteWithChildren
+  AuthenticatedPropostasIdRoute: typeof AuthenticatedPropostasIdRoute
 }
 
 const AuthenticatedPropostasRouteChildren: AuthenticatedPropostasRouteChildren =
   {
-    AuthenticatedPropostasIdRoute: AuthenticatedPropostasIdRouteWithChildren,
+    AuthenticatedPropostasIdRoute: AuthenticatedPropostasIdRoute,
   }
 
 const AuthenticatedPropostasRouteWithChildren =
@@ -347,6 +317,8 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ContratosIdDocumentoRoute: ContratosIdDocumentoRoute,
+  PropostasIdDocumentoRoute: PropostasIdDocumentoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

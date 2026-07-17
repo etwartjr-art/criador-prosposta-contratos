@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
@@ -6,14 +6,27 @@ import { ProposalDocument } from "@/components/documents";
 import { ArrowLeft, Printer, Download } from "lucide-react";
 import { downloadElementAsPdf } from "@/lib/download-pdf";
 import { ShareLinkButtons } from "@/components/share-link-buttons";
+import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_authenticated/propostas/$id/documento")({
+export const Route = createFileRoute("/propostas/$id/documento")({
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      throw redirect({ to: "/auth" });
+    }
+  },
   component: ProposalDocumentPage,
 });
 
 function ProposalDocumentPage() {
   const { id } = Route.useParams();
-  const { proposals, clients, etw, representatives, hydrated } = useApp();
+  const { proposals, clients, etw, representatives, hydrated, hydrate } = useApp();
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
   const proposal = proposals.find((p) => p.id === id);
   const client = proposal ? clients.find((c) => c.id === proposal.clientId) : null;
 

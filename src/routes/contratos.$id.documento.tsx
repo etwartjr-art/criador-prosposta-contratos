@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
@@ -6,14 +6,28 @@ import { ContractDocument } from "@/components/documents";
 import { ArrowLeft, Printer, Download } from "lucide-react";
 import { downloadElementAsPdf } from "@/lib/download-pdf";
 import { ShareLinkButtons } from "@/components/share-link-buttons";
+import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_authenticated/contratos/$id/documento")({
+export const Route = createFileRoute("/contratos/$id/documento")({
+  ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) {
+      throw redirect({ to: "/auth" });
+    }
+  },
   component: ContractDocumentPage,
 });
 
 function ContractDocumentPage() {
   const { id } = Route.useParams();
-  const { contracts, proposals, clients, representatives, etw, hydrated } = useApp();
+  const { contracts, proposals, clients, representatives, etw, hydrated, hydrate } =
+    useApp();
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
   const contract = contracts.find((c) => c.id === id);
   const client = contract ? clients.find((c) => c.id === contract.clientId) : null;
   const proposal = contract
