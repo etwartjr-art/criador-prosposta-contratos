@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { useApp } from "@/store/app";
+import { InstallPrompt } from "@/components/install-prompt";
+import { registerPwa } from "@/lib/pwa";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
