@@ -66,17 +66,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ETW Art — Contratos & Orçamentos" },
+      { title: "Etw Art Contabilidade — Contratos e Propostas" },
       {
         name: "description",
         content:
-          "Sistema de contratos e orçamentos da ETW Art Contabilidade: clientes, propostas e contratos de prestação de serviços contábeis.",
+          "Sistema de contratos e orçamentos da Etw Art Contabilidade: clientes, propostas e contratos de prestação de serviços contábeis.",
       },
-      { property: "og:title", content: "ETW Art — Contratos & Orçamentos" },
+      { property: "og:title", content: "Etw Art Contabilidade — Contratos e Propostas" },
       {
         property: "og:description",
         content:
-          "Cadastre clientes, monte orçamentos e gere contratos da ETW Art Contabilidade.",
+          "Cadastre clientes, monte orçamentos e gere contratos da Etw Art Contabilidade.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "ETW Art" },
+      { name: "apple-mobile-web-app-title", content: "Etw Art" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
