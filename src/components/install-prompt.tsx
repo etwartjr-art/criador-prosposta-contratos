@@ -96,7 +96,7 @@ export function InstallPrompt() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-foreground">
-            Instalar ETW Art no seu dispositivo
+            Instalar Etw Art no seu dispositivo
           </p>
           {ios ? (
             <p className="mt-1 text-xs text-muted-foreground">
