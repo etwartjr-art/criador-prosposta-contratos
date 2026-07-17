@@ -8,7 +8,10 @@ export const DEFAULT_ETW: EtwSettings = {
     "Rua do Parque, nº 361, Jardim Atlântico, Goiânia - GO, CEP 74.343-245",
   email: "financeiro@etw-art-contabilidade.com.br",
   foro: "Comarca de Goiânia - Goiás",
-  socios: ["Sócio Administrador 1", "Sócio Administrador 2"],
+  socios: [
+    "Etwart Jeronimo da Silva Junior, CPF 801.854.441-72, Sócio-Administrador",
+    "Marcelo Martins Ribeiro, CPF 012.144.576-30, Sócio-Administrador",
+  ],
 };
 
 export const DEFAULT_SERVICES: Service[] = [
