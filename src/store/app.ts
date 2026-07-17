@@ -241,12 +241,19 @@ const mapEtw = (r: any): EtwSettings => ({
   socios: (r.socios ?? []) as string[],
 });
 
-// Fire-and-forget helper: shows a toast if the operation fails.
-const bg = (label: string, promise: PromiseLike<{ error: unknown }>) => {
+// Fire-and-forget helper: shows a toast and rolls back local state if the write fails.
+const bg = (
+  label: string,
+  promise: PromiseLike<{ error: unknown }>,
+  rollback?: () => void,
+) => {
   Promise.resolve(promise).then((res) => {
     if (res?.error) {
       console.error(`[store] ${label} failed`, res.error);
-      toast.error(`Erro ao salvar (${label}). Verifique sua conexão.`);
+      toast.error(
+        `Não foi possível salvar (${label}). A alteração foi desfeita — tente novamente.`,
+      );
+      rollback?.();
     }
   });
 };
@@ -312,7 +319,11 @@ export const useApp = create<State>()((set, get) => ({
       createdAt: new Date().toISOString(),
     };
     set({ clients: [...get().clients, client] });
-    bg("cliente", supabase.from("clients").insert(clientToRow(client)));
+    bg(
+      "cliente",
+      supabase.from("clients").insert(clientToRow(client)),
+      () => set({ clients: get().clients.filter((c) => c.id !== client.id) }),
+    );
     return client;
   },
   updateClient: (id, patch) => {
@@ -338,7 +349,14 @@ export const useApp = create<State>()((set, get) => ({
   addRep: (r) => {
     const rep: Representative = { ...r, id: nanoid() };
     set({ representatives: [...get().representatives, rep] });
-    bg("representante", supabase.from("representatives").insert(repToRow(rep)));
+    bg(
+      "representante",
+      supabase.from("representatives").insert(repToRow(rep)),
+      () =>
+        set({
+          representatives: get().representatives.filter((r) => r.id !== rep.id),
+        }),
+    );
     return rep;
   },
   updateRep: (id, patch) => {
@@ -366,7 +384,11 @@ export const useApp = create<State>()((set, get) => ({
   addService: (s) => {
     const svc: Service = { ...s, id: nanoid() };
     set({ services: [...get().services, svc] });
-    bg("serviço", supabase.from("services").insert(serviceToRow(svc)));
+    bg(
+      "serviço",
+      supabase.from("services").insert(serviceToRow(svc)),
+      () => set({ services: get().services.filter((s) => s.id !== svc.id) }),
+    );
     return svc;
   },
   updateService: (id, patch) => {
@@ -395,7 +417,14 @@ export const useApp = create<State>()((set, get) => ({
       createdAt: new Date().toISOString(),
     };
     set({ proposals: [...get().proposals, proposal] });
-    bg("proposta", supabase.from("proposals").insert(proposalToRow(proposal)));
+    bg(
+      "proposta",
+      supabase.from("proposals").insert(proposalToRow(proposal)),
+      () =>
+        set({
+          proposals: get().proposals.filter((p) => p.id !== proposal.id),
+        }),
+    );
     return proposal;
   },
   updateProposal: (id, patch) => {
@@ -455,12 +484,20 @@ export const useApp = create<State>()((set, get) => ({
     });
     bg(
       "proposta",
-      supabase
-        .from("proposals")
-        .update({ status: "Aprovada" })
-        .eq("id", id),
+      supabase.from("proposals").update({ status: "Aprovada" }).eq("id", id),
+      () =>
+        set({
+          proposals: get().proposals.map((p) => (p.id === id ? prop : p)),
+        }),
     );
-    bg("contrato", supabase.from("contracts").insert(contractToRow(contract)));
+    bg(
+      "contrato",
+      supabase.from("contracts").insert(contractToRow(contract)),
+      () =>
+        set({
+          contracts: get().contracts.filter((c) => c.id !== contract.id),
+        }),
+    );
     return contract;
   },
 

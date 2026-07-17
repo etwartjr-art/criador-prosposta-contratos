@@ -29,8 +29,8 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/" });
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/" });
     });
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN") {
