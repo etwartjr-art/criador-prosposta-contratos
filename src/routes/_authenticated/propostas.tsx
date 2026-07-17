@@ -38,6 +38,9 @@ import type { Proposal, ProposalItem, ProposalStatus } from "@/lib/types";
 import { brl, formatDate, isExpired, today } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/propostas")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    edit: typeof s.edit === "string" ? s.edit : undefined,
+  }),
   component: ProposalsPage,
 });
 
