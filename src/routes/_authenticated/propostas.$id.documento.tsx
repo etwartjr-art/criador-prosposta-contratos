@@ -13,13 +13,19 @@ export const Route = createFileRoute("/_authenticated/propostas/$id/documento")(
 
 function ProposalDocumentPage() {
   const { id } = Route.useParams();
-  const { proposals, clients, etw, representatives } = useApp();
+  const { proposals, clients, etw, representatives, hydrated } = useApp();
   const proposal = proposals.find((p) => p.id === id);
   const client = proposal ? clients.find((c) => c.id === proposal.clientId) : null;
 
   useEffect(() => {
     if (proposal) document.title = `Proposta ${proposal.numero}`;
   }, [proposal]);
+
+  if (!hydrated) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Carregando documento…</div>
+    );
+  }
 
   if (!proposal || !client) {
     return (

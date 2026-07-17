@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/contratos/$id/documento")(
 
 function ContractDocumentPage() {
   const { id } = Route.useParams();
-  const { contracts, proposals, clients, representatives, etw } = useApp();
+  const { contracts, proposals, clients, representatives, etw, hydrated } = useApp();
   const contract = contracts.find((c) => c.id === id);
   const client = contract ? clients.find((c) => c.id === contract.clientId) : null;
   const proposal = contract
@@ -23,6 +23,12 @@ function ContractDocumentPage() {
   useEffect(() => {
     if (contract) document.title = `Contrato ${contract.numero}`;
   }, [contract]);
+
+  if (!hydrated) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Carregando documento…</div>
+    );
+  }
 
   if (!contract || !client) {
     return (
