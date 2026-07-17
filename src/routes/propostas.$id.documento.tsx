@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
 import { ProposalDocument } from "@/components/documents";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer, Download } from "lucide-react";
+import { downloadElementAsPdf } from "@/lib/download-pdf";
 
 export const Route = createFileRoute("/propostas/$id/documento")({
   component: ProposalDocumentPage,
