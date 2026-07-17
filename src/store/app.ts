@@ -484,12 +484,20 @@ export const useApp = create<State>()((set, get) => ({
     });
     bg(
       "proposta",
-      supabase
-        .from("proposals")
-        .update({ status: "Aprovada" })
-        .eq("id", id),
+      supabase.from("proposals").update({ status: "Aprovada" }).eq("id", id),
+      () =>
+        set({
+          proposals: get().proposals.map((p) => (p.id === id ? prop : p)),
+        }),
     );
-    bg("contrato", supabase.from("contracts").insert(contractToRow(contract)));
+    bg(
+      "contrato",
+      supabase.from("contracts").insert(contractToRow(contract)),
+      () =>
+        set({
+          contracts: get().contracts.filter((c) => c.id !== contract.id),
+        }),
+    );
     return contract;
   },
 
