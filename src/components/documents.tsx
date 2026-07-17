@@ -1,6 +1,7 @@
 import type { Client, Contract, Proposal, Representative } from "@/lib/types";
 import type { EtwSettings } from "@/lib/types";
 import { brl, formatDate, formatDateLong } from "@/lib/format";
+import etwLogo from "@/assets/etw-logo.jpeg.asset.json";
 
 export function ProposalDocument({
   proposal,
@@ -23,20 +24,27 @@ export function ProposalDocument({
 
   return (
     <article className="mx-auto max-w-[820px] rounded-md border border-border bg-card p-10 text-sm text-foreground shadow-sm print:shadow-none">
-      <header className="flex items-start justify-between border-b border-border pb-4">
-        <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground">
-            Proposta comercial
-          </div>
-          <h1 className="mt-1 text-2xl font-semibold" style={{ fontFamily: "Fraunces, serif" }}>
-            {proposal.numero}
-          </h1>
-          {proposal.assunto && (
-            <div className="mt-1 text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">Assunto:</span>{" "}
-              {proposal.assunto}
+      <header className="flex items-start justify-between gap-4 border-b border-border pb-4">
+        <div className="flex items-start gap-4">
+          <img
+            src={etwLogo.url}
+            alt={etw.razaoSocial}
+            className="h-16 w-auto object-contain"
+          />
+          <div>
+            <div className="text-xs uppercase tracking-widest text-muted-foreground">
+              Proposta comercial
             </div>
-          )}
+            <h1 className="mt-1 text-2xl font-semibold" style={{ fontFamily: "Fraunces, serif" }}>
+              {proposal.numero}
+            </h1>
+            {proposal.assunto && (
+              <div className="mt-1 text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">Assunto:</span>{" "}
+                {proposal.assunto}
+              </div>
+            )}
+          </div>
         </div>
         <div className="text-right text-xs">
           <div className="font-semibold text-foreground">{etw.razaoSocial}</div>
@@ -243,7 +251,12 @@ export function ContractDocument({
 
   return (
     <article className="mx-auto max-w-[820px] rounded-md border border-border bg-card p-10 text-sm leading-relaxed text-foreground shadow-sm print:shadow-none">
-      <header className="border-b border-border pb-4 text-center">
+      <header className="flex flex-col items-center border-b border-border pb-4 text-center">
+        <img
+          src={etwLogo.url}
+          alt={etw.razaoSocial}
+          className="mb-3 h-16 w-auto object-contain"
+        />
         <div className="text-xs uppercase tracking-widest text-muted-foreground">
           Contrato de prestação de serviços contábeis
         </div>
