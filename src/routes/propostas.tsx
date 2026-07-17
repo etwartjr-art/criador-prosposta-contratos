@@ -201,6 +201,10 @@ function NewProposalDialog({
   const [implantacao, setImplantacao] = useState(0);
   const [obs, setObs] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [custom, setCustom] = useState<ProposalItem[]>([]);
+  const [cNome, setCNome] = useState("");
+  const [cModulo, setCModulo] = useState("Outros");
+  const [cDesc, setCDesc] = useState("");
 
   const toggle = (id: string) => {
     const n = new Set(selected);
@@ -209,8 +213,32 @@ function NewProposalDialog({
     setSelected(n);
   };
 
+  const addCustom = () => {
+    if (!cNome.trim()) {
+      toast.error("Informe o nome do processo/serviço");
+      return;
+    }
+    setCustom([
+      ...custom,
+      {
+        serviceId: `custom-${Date.now()}`,
+        nome: cNome.trim(),
+        modulo: cModulo || "Outros",
+        descricao: cDesc.trim(),
+      },
+    ]);
+    setCNome("");
+    setCDesc("");
+    setCModulo("Outros");
+  };
+
+  const removeCustom = (idx: number) =>
+    setCustom(custom.filter((_, i) => i !== idx));
+
+  const totalItems = selected.size + custom.length;
+
   return (
-    <DialogContent className="max-w-3xl">
+    <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
       <DialogHeader>
         <DialogTitle>Nova proposta</DialogTitle>
       </DialogHeader>
@@ -269,8 +297,11 @@ function NewProposalDialog({
           <Textarea rows={2} value={obs} onChange={(e) => setObs(e.target.value)} />
         </div>
         <div className="sm:col-span-2">
-          <Label>Serviços incluídos ({selected.size} selecionado{selected.size === 1 ? "" : "s"})</Label>
-          <div className="mt-2 max-h-64 space-y-1 overflow-y-auto rounded-md border border-border p-2">
+          <Label>
+            Serviços do catálogo ({selected.size} selecionado
+            {selected.size === 1 ? "" : "s"})
+          </Label>
+          <div className="mt-2 max-h-56 space-y-1 overflow-y-auto rounded-md border border-border p-2">
             {services.map((s) => (
               <label
                 key={s.id}
@@ -290,17 +321,77 @@ function NewProposalDialog({
             ))}
           </div>
         </div>
+
+        <div className="sm:col-span-2 rounded-md border border-dashed border-border p-3">
+          <Label className="text-sm font-semibold">
+            Processos/serviços personalizados ({custom.length})
+          </Label>
+          <p className="mb-2 text-xs text-muted-foreground">
+            Adicione quantos processos extras precisar, fora do catálogo.
+          </p>
+
+          {custom.length > 0 && (
+            <div className="mb-3 space-y-1">
+              {custom.map((it, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-start justify-between gap-2 rounded border border-border bg-muted/30 p-2"
+                >
+                  <div className="flex-1 text-sm">
+                    <div className="font-medium">{it.nome}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {it.modulo}
+                      {it.descricao ? ` · ${it.descricao}` : ""}
+                    </div>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => removeCustom(idx)}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Input
+              placeholder="Nome do processo/serviço"
+              value={cNome}
+              onChange={(e) => setCNome(e.target.value)}
+            />
+            <Input
+              placeholder="Módulo (ex.: Fiscal, Outros)"
+              value={cModulo}
+              onChange={(e) => setCModulo(e.target.value)}
+            />
+            <Textarea
+              rows={2}
+              className="sm:col-span-2"
+              placeholder="Descrição / escopo (opcional)"
+              value={cDesc}
+              onChange={(e) => setCDesc(e.target.value)}
+            />
+            <div className="sm:col-span-2">
+              <Button type="button" variant="outline" onClick={addCustom}>
+                <Plus className="mr-1 h-4 w-4" /> Adicionar processo
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
       <DialogFooter>
         <Button
           onClick={() => {
-            if (!clientId || selected.size === 0 || !honorarios) {
+            if (!clientId || totalItems === 0 || !honorarios) {
               toast.error(
-                "Selecione cliente, ao menos um serviço e informe honorários",
+                "Selecione cliente, ao menos um serviço/processo e informe honorários",
               );
               return;
             }
-            const items: ProposalItem[] = services
+            const catalogItems: ProposalItem[] = services
               .filter((s) => selected.has(s.id))
               .map((s) => ({
                 serviceId: s.id,
@@ -312,7 +403,7 @@ function NewProposalDialog({
               clientId,
               dataEmissao,
               validadeDias: validade,
-              items,
+              items: [...catalogItems, ...custom],
               honorariosMensais: honorarios,
               taxaImplantacao: implantacao,
               observacoes: obs,
@@ -325,3 +416,4 @@ function NewProposalDialog({
     </DialogContent>
   );
 }
+
