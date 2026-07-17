@@ -43,6 +43,14 @@ export function ShareLinkButtons({ title, url }: Props) {
     }
   };
 
+  const email = () => {
+    const subject = encodeURIComponent(title);
+    const body = encodeURIComponent(
+      `Olá,\n\nSegue o link do documento "${title}":\n${link}\n\nAtenciosamente,\nETW Art Contabilidade`
+    );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  };
+
   return (
     <>
       <Button variant="outline" onClick={copy} title={link}>
@@ -52,6 +60,9 @@ export function ShareLinkButtons({ title, url }: Props) {
           <Copy className="mr-1 h-4 w-4" />
         )}
         {copied ? "Copiado" : "Copiar link"}
+      </Button>
+      <Button variant="outline" onClick={email}>
+        <Mail className="mr-1 h-4 w-4" /> Enviar por e-mail
       </Button>
       <Button variant="outline" onClick={share}>
         <Share2 className="mr-1 h-4 w-4" /> Compartilhar
