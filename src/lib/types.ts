@@ -75,6 +75,22 @@ export interface Proposal {
   observacoes?: string;
   status: ProposalStatus;
   createdAt: string;
+  /** Assunto/objeto da proposta */
+  assunto?: string;
+  /** Cidade/UF de emissão */
+  cidadeUf?: string;
+  /** Representante do cliente que recebe a proposta */
+  responsavelClienteId?: ID;
+  /** Ex.: IPCA, IGP-M */
+  indiceReajuste?: string;
+  /** Ex.: Boleto, PIX, Transferência */
+  formaPagamento?: string;
+  /** Dia do mês para vencimento (1-31) */
+  diaVencimento?: number;
+  /** Dia útil para entrega de obrigações */
+  diaUtilEntrega?: number;
+  /** Prazo em dias para implantação */
+  prazoImplementacaoDias?: number;
 }
 
 export type ContractStatus =
