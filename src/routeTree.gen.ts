@@ -17,6 +17,7 @@ import { Route as ClientesRouteImport } from './routes/clientes'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropostasIdRouteImport } from './routes/propostas.$id'
 import { Route as ContratosIdRouteImport } from './routes/contratos.$id'
+import { Route as PropostasIdDocumentoRouteImport } from './routes/propostas.$id.documento'
 
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
@@ -58,6 +59,11 @@ const ContratosIdRoute = ContratosIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ContratosRoute,
 } as any)
+const PropostasIdDocumentoRoute = PropostasIdDocumentoRouteImport.update({
+  id: '/documento',
+  path: '/documento',
+  getParentRoute: () => PropostasIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,7 +73,8 @@ export interface FileRoutesByFullPath {
   '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
   '/contratos/$id': typeof ContratosIdRoute
-  '/propostas/$id': typeof PropostasIdRoute
+  '/propostas/$id': typeof PropostasIdRouteWithChildren
+  '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -77,7 +84,8 @@ export interface FileRoutesByTo {
   '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
   '/contratos/$id': typeof ContratosIdRoute
-  '/propostas/$id': typeof PropostasIdRoute
+  '/propostas/$id': typeof PropostasIdRouteWithChildren
+  '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -88,7 +96,8 @@ export interface FileRoutesById {
   '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
   '/contratos/$id': typeof ContratosIdRoute
-  '/propostas/$id': typeof PropostasIdRoute
+  '/propostas/$id': typeof PropostasIdRouteWithChildren
+  '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/propostas/$id/documento'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/propostas/$id/documento'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/propostas/$id/documento'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -190,6 +202,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContratosIdRouteImport
       parentRoute: typeof ContratosRoute
     }
+    '/propostas/$id/documento': {
+      id: '/propostas/$id/documento'
+      path: '/documento'
+      fullPath: '/propostas/$id/documento'
+      preLoaderRoute: typeof PropostasIdDocumentoRouteImport
+      parentRoute: typeof PropostasIdRoute
+    }
   }
 }
 
@@ -205,12 +224,24 @@ const ContratosRouteWithChildren = ContratosRoute._addFileChildren(
   ContratosRouteChildren,
 )
 
+interface PropostasIdRouteChildren {
+  PropostasIdDocumentoRoute: typeof PropostasIdDocumentoRoute
+}
+
+const PropostasIdRouteChildren: PropostasIdRouteChildren = {
+  PropostasIdDocumentoRoute: PropostasIdDocumentoRoute,
+}
+
+const PropostasIdRouteWithChildren = PropostasIdRoute._addFileChildren(
+  PropostasIdRouteChildren,
+)
+
 interface PropostasRouteChildren {
-  PropostasIdRoute: typeof PropostasIdRoute
+  PropostasIdRoute: typeof PropostasIdRouteWithChildren
 }
 
 const PropostasRouteChildren: PropostasRouteChildren = {
-  PropostasIdRoute: PropostasIdRoute,
+  PropostasIdRoute: PropostasIdRouteWithChildren,
 }
 
 const PropostasRouteWithChildren = PropostasRoute._addFileChildren(
