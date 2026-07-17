@@ -25,6 +25,11 @@ export interface Representative {
   cargo?: string;
   email?: string;
   telefone?: string;
+  nacionalidade?: string;
+  estadoCivil?: string;
+  profissao?: string;
+  dataNascimento?: string;
+  endereco?: string;
 }
 
 export type ServiceModule =
