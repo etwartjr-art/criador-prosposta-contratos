@@ -241,12 +241,19 @@ const mapEtw = (r: any): EtwSettings => ({
   socios: (r.socios ?? []) as string[],
 });
 
-// Fire-and-forget helper: shows a toast if the operation fails.
-const bg = (label: string, promise: PromiseLike<{ error: unknown }>) => {
+// Fire-and-forget helper: shows a toast and rolls back local state if the write fails.
+const bg = (
+  label: string,
+  promise: PromiseLike<{ error: unknown }>,
+  rollback?: () => void,
+) => {
   Promise.resolve(promise).then((res) => {
     if (res?.error) {
       console.error(`[store] ${label} failed`, res.error);
-      toast.error(`Erro ao salvar (${label}). Verifique sua conexão.`);
+      toast.error(
+        `Não foi possível salvar (${label}). A alteração foi desfeita — tente novamente.`,
+      );
+      rollback?.();
     }
   });
 };
