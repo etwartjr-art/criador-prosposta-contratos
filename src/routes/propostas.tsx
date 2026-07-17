@@ -426,12 +426,16 @@ function NewProposalDialog({
             }
             const catalogItems: ProposalItem[] = services
               .filter((s) => selected.has(s.id))
-              .map((s) => ({
-                serviceId: s.id,
-                nome: s.nome,
-                modulo: s.modulo,
-                descricao: s.descricaoEscopo,
-              }));
+              .map((s) => {
+                const info = catalogInfo[s.id]?.trim();
+                return {
+                  serviceId: s.id,
+                  nome: s.nome,
+                  modulo: s.modulo,
+                  descricao: s.descricaoEscopo,
+                  informacoes: info || undefined,
+                };
+              });
             onCreate({
               clientId,
               dataEmissao,
