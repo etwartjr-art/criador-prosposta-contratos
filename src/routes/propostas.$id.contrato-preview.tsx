@@ -1,5 +1,5 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useEffect, useMemo } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
 import { ContractDocument } from "@/components/documents";
@@ -12,23 +12,30 @@ import type { Contract } from "@/lib/types";
 
 export const Route = createFileRoute("/propostas/$id/contrato-preview")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session) {
-      throw redirect({ to: "/auth" });
-    }
-  },
   component: ContractPreviewPage,
 });
 
 function ContractPreviewPage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
   const { proposals, clients, representatives, etw, hydrated, hydrate } =
     useApp();
 
   useEffect(() => {
-    hydrate();
-  }, [hydrate]);
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        navigate({ to: "/auth" });
+      } else {
+        setAuthChecked(true);
+      }
+    });
+  }, [navigate]);
+
+  useEffect(() => {
+    if (authChecked) hydrate();
+  }, [authChecked, hydrate]);
+
 
   const proposal = proposals.find((p) => p.id === id);
   const client = proposal ? clients.find((c) => c.id === proposal.clientId) : null;
