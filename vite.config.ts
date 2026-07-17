@@ -5,7 +5,36 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
-import { VitePWA } from "vite-plugin-pwa";
+import type { Plugin } from "vite";
+
+// Self-destruct service worker. Replaces the previous vite-plugin-pwa build,
+// which was serving stale HTML/JS and hiding the app. Any browser that had
+// the old SW installed will fetch this new /sw.js, activate it, unregister
+// itself, and wipe all caches — restoring access to the live site.
+const selfDestructSw = (): Plugin => {
+  const code = `self.addEventListener('install', (e) => { self.skipWaiting(); });
+self.addEventListener('activate', (e) => {
+  e.waitUntil((async () => {
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((k) => caches.delete(k)));
+    } catch (_) {}
+    try { await self.registration.unregister(); } catch (_) {}
+    try {
+      const clients = await self.clients.matchAll({ type: 'window' });
+      for (const c of clients) { try { c.navigate(c.url); } catch (_) {} }
+    } catch (_) {}
+  })());
+});
+`;
+  return {
+    name: "self-destruct-sw",
+    apply: "build",
+    generateBundle() {
+      this.emitFile({ type: "asset", fileName: "sw.js", source: code });
+    },
+  };
+};
 
 export default defineConfig({
   tanstackStart: {
@@ -14,55 +43,7 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
-    plugins: [
-      VitePWA({
-        registerType: "autoUpdate",
-        injectRegister: null,
-        filename: "sw.js",
-        strategies: "generateSW",
-        devOptions: { enabled: false },
-        manifest: false,
-        includeAssets: [
-          "favicon.ico",
-          "icon-192.png",
-          "icon-512.png",
-          "apple-touch-icon.png",
-          "manifest.webmanifest",
-        ],
-        workbox: {
-          globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,woff2}"],
-          navigateFallback: "/",
-          navigateFallbackDenylist: [/^\/api\//, /^\/~oauth/],
-          runtimeCaching: [
-            {
-              urlPattern: ({ request }) => request.mode === "navigate",
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "html-nav",
-                networkTimeoutSeconds: 4,
-              },
-            },
-            {
-              urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin && /\.(?:js|css|woff2?)$/.test(url.pathname),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "static-assets",
-                expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              },
-            },
-            {
-              urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin && /\.(?:png|jpg|jpeg|svg|webp|ico)$/.test(url.pathname),
-              handler: "CacheFirst",
-              options: {
-                cacheName: "images",
-                expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
-              },
-            },
-          ],
-        },
-      }),
-    ],
+    plugins: [selfDestructSw()],
   },
 });
+
