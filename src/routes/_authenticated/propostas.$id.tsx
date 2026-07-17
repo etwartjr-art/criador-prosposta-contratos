@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Printer, XCircle, Send, Eye, Pencil } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Printer, XCircle, Send, Eye, Pencil, FileSignature } from "lucide-react";
 import type { ProposalStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/_authenticated/propostas/$id")({
@@ -124,6 +124,15 @@ function ProposalDetail() {
                   rel="noreferrer"
                 >
                   <Eye className="mr-1 h-4 w-4" /> Ver documento
+                </a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a
+                  href={`/propostas/${proposal.id}/contrato-preview`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FileSignature className="mr-1 h-4 w-4" /> Pré-visualizar contrato
                 </a>
               </Button>
 

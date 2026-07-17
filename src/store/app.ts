@@ -464,7 +464,7 @@ export const useApp = create<State>()((set, get) => ({
       signatariosClienteIds: prop.responsavelClienteId
         ? [prop.responsavelClienteId]
         : [],
-      signatariosContratada: [get().etw.socios[0] ?? ""],
+      signatariosContratada: get().etw.socios.filter(Boolean),
       status: "Rascunho",
       createdAt: new Date().toISOString(),
       prazoVigenciaMeses: 12,
