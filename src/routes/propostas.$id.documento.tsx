@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
 import { ProposalDocument } from "@/components/documents";
-import { ArrowLeft, Printer } from "lucide-react";
+import { ArrowLeft, Printer, Download } from "lucide-react";
+import { downloadElementAsPdf } from "@/lib/download-pdf";
 
 export const Route = createFileRoute("/propostas/$id/documento")({
   component: ProposalDocumentPage,
@@ -42,9 +43,18 @@ function ProposalDocumentPage() {
             <ArrowLeft className="mr-1 h-4 w-4" /> Voltar à proposta
           </Link>
         </Button>
-        <Button onClick={() => window.print()}>
-          <Printer className="mr-1 h-4 w-4" /> Imprimir / PDF
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => window.print()}>
+            <Printer className="mr-1 h-4 w-4" /> Imprimir
+          </Button>
+          <Button
+            onClick={() =>
+              downloadElementAsPdf(".print-area", `Proposta-${proposal.numero}`)
+            }
+          >
+            <Download className="mr-1 h-4 w-4" /> Baixar PDF
+          </Button>
+        </div>
       </div>
       <div className="print-area mx-auto max-w-5xl bg-background shadow-sm">
         <ProposalDocument proposal={proposal} client={client} etw={etw} />
