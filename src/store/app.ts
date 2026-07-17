@@ -432,10 +432,21 @@ export const useApp = create<State>()((set, get) => ({
       fimVigencia: fim,
       valorMensal: prop.honorariosMensais,
       services: prop.items,
-      signatariosClienteIds: [],
+      signatariosClienteIds: prop.responsavelClienteId
+        ? [prop.responsavelClienteId]
+        : [],
       signatariosContratada: [get().etw.socios[0] ?? ""],
       status: "Rascunho",
       createdAt: new Date().toISOString(),
+      prazoVigenciaMeses: 12,
+      renovacaoAutomaticaDias: 30,
+      avisoNaoRenovacaoDias: 30,
+      avisoPrevioRescisaoDias: 30,
+      diaPagamento: prop.diaVencimento ?? 5,
+      formaPagamento: prop.formaPagamento ?? "Boleto bancário",
+      jurosMesPercent: 1,
+      multaMoratoriaPercent: 2,
+      foro: get().etw.foro,
     };
     const updatedProp = { ...prop, status: "Aprovada" as const };
     set({
