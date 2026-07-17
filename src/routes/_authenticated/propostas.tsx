@@ -278,6 +278,16 @@ function ProposalDialog({
   const [selected, setSelected] = useState<Set<string>>(initialCatalogIds);
   const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>(initialCatalogInfo);
   const [custom, setCustom] = useState<ProposalItem[]>(initialCustom);
+  const [assunto, setAssunto] = useState(initial?.assunto ?? "");
+  const [cidadeUf, setCidadeUf] = useState(initial?.cidadeUf ?? "");
+  const [responsavelId, setResponsavelId] = useState(initial?.responsavelClienteId ?? "");
+  const [indiceReajuste, setIndiceReajuste] = useState(initial?.indiceReajuste ?? "IPCA");
+  const [formaPagamento, setFormaPagamento] = useState(initial?.formaPagamento ?? "Boleto bancário");
+  const [diaVencimento, setDiaVencimento] = useState<number | "">(initial?.diaVencimento ?? 5);
+  const [diaUtilEntrega, setDiaUtilEntrega] = useState<number | "">(initial?.diaUtilEntrega ?? "");
+  const [prazoImplantacao, setPrazoImplantacao] = useState<number | "">(initial?.prazoImplementacaoDias ?? "");
+
+  const clientReps = representatives.filter((r) => r.clientId === clientId);
 
   const [cNome, setCNome] = useState("");
   const [cModulo, setCModulo] = useState("Outros");
