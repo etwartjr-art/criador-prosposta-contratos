@@ -132,7 +132,7 @@ function ProposalDetail() {
       </div>
 
       <div className="print-area">
-        <ProposalDocument proposal={proposal} client={client} etw={etw} />
+        <ProposalDocument proposal={proposal} client={client} etw={etw} representatives={representatives} />
       </div>
     </div>
   );
