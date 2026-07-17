@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { useApp } from "@/store/app";
+import { InstallPrompt } from "@/components/install-prompt";
+import { registerPwa } from "@/lib/pwa";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
@@ -94,9 +96,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "theme-color", content: "#0f2540" },
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "mobile-web-app-capable", content: "yes" },
+        {
+          name: "apple-mobile-web-app-status-bar-style",
+          content: "black-translucent",
+        },
+        { name: "apple-mobile-web-app-title", content: "ETW Art" },
       ],
       links: [
         { rel: "stylesheet", href: appCss },
+        { rel: "manifest", href: "/manifest.webmanifest" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
         {
           rel: "preconnect",
           href: "https://fonts.googleapis.com",
@@ -160,6 +172,7 @@ function StoreHydrator() {
   const hydrate = useApp((s) => s.hydrate);
   useEffect(() => {
     hydrate();
+    registerPwa();
   }, [hydrate]);
   return null;
 }
@@ -185,6 +198,7 @@ function RootComponent() {
           </SidebarInset>
         </div>
         <Toaster richColors position="top-right" />
+        <InstallPrompt />
       </SidebarProvider>
     </QueryClientProvider>
   );
