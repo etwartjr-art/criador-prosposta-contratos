@@ -490,7 +490,7 @@ function ProposalDialog({
                   informacoes: info || undefined,
                 };
               });
-            onCreate({
+            onSubmit({
               clientId,
               dataEmissao,
               validadeDias: validade,
@@ -501,8 +501,9 @@ function ProposalDialog({
             });
           }}
         >
-          Criar proposta
+          {isEdit ? "Salvar alterações" : "Criar proposta"}
         </Button>
+
       </DialogFooter>
     </DialogContent>
   );
