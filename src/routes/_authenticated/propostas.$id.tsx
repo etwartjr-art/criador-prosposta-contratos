@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Printer, XCircle, Send, Eye } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Printer, XCircle, Send, Eye, Pencil } from "lucide-react";
 import type { ProposalStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/_authenticated/propostas/$id")({
@@ -109,6 +109,11 @@ function ProposalDetail() {
                 </Button>
               )}
               <Button variant="outline" asChild>
+                <Link to="/propostas" search={{ edit: proposal.id }}>
+                  <Pencil className="mr-1 h-4 w-4" /> Editar
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
                 <a
                   href={`/propostas/${proposal.id}/documento`}
                   target="_blank"
@@ -117,6 +122,7 @@ function ProposalDetail() {
                   <Eye className="mr-1 h-4 w-4" /> Ver documento
                 </a>
               </Button>
+
               <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-1 h-4 w-4" /> Imprimir / PDF
               </Button>

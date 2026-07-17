@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
@@ -32,12 +32,15 @@ import {
 } from "@/components/ui/select";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, FileText, Trash2, Eye } from "lucide-react";
+import { Plus, FileText, Trash2, Eye, Pencil } from "lucide-react";
 import { useApp } from "@/store/app";
 import type { Proposal, ProposalItem, ProposalStatus } from "@/lib/types";
 import { brl, formatDate, isExpired, today } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/propostas")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    edit: typeof s.edit === "string" ? s.edit : undefined,
+  }),
   component: ProposalsPage,
 });
 
@@ -58,7 +61,20 @@ function ProposalsPage() {
     updateProposal,
     removeProposal,
   } = useApp();
+  const { edit: editId } = Route.useSearch();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Proposal | null>(null);
+
+  useEffect(() => {
+    if (editId) {
+      const p = proposals.find((x) => x.id === editId);
+      if (p) {
+        setEditing(p);
+        setOpen(true);
+      }
+    }
+  }, [editId, proposals]);
 
   const enriched = useMemo(
     () =>
@@ -78,22 +94,37 @@ function ProposalsPage() {
         title="Propostas / Orçamentos"
         description="Escopo, valores e condições comerciais das propostas enviadas aos clientes."
         actions={
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(v) => {
+            setOpen(v);
+            if (!v) {
+              setEditing(null);
+              if (editId) navigate({ to: "/propostas", search: {} });
+            }
+          }}>
             <DialogTrigger asChild>
-              <Button disabled={clients.length === 0}>
+              <Button disabled={clients.length === 0} onClick={() => setEditing(null)}>
                 <Plus className="mr-1 h-4 w-4" /> Nova proposta
               </Button>
             </DialogTrigger>
-            <NewProposalDialog
-              onCreate={(data) => {
-                const p = addProposal(data);
-                toast.success(`Proposta ${p.numero} criada`);
+            <ProposalDialog
+              key={editing?.id ?? "new"}
+              initial={editing}
+              onSubmit={(data) => {
+                if (editing) {
+                  updateProposal(editing.id, data);
+                  toast.success(`Proposta ${editing.numero} atualizada`);
+                } else {
+                  const p = addProposal(data);
+                  toast.success(`Proposta ${p.numero} criada`);
+                }
                 setOpen(false);
+                setEditing(null);
               }}
             />
           </Dialog>
         }
       />
+
 
       {clients.length === 0 && (
         <Card>
@@ -175,6 +206,17 @@ function ProposalsPage() {
                         <Button
                           size="icon"
                           variant="ghost"
+                          title="Editar"
+                          onClick={() => {
+                            setEditing(p);
+                            setOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
                           onClick={() => {
                             if (confirm(`Excluir ${p.numero}?`)) {
                               removeProposal(p.id);
@@ -184,6 +226,7 @@ function ProposalsPage() {
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
+
                       </div>
                     </TableCell>
                   </TableRow>
@@ -197,22 +240,45 @@ function ProposalsPage() {
   );
 }
 
-function NewProposalDialog({
-  onCreate,
+type ProposalFormData = Omit<Proposal, "id" | "numero" | "status" | "createdAt">;
+
+function ProposalDialog({
+  initial,
+  onSubmit,
 }: {
-  onCreate: (data: Omit<Proposal, "id" | "numero" | "status" | "createdAt">) => void;
+  initial: Proposal | null;
+  onSubmit: (data: ProposalFormData) => void;
 }) {
   const { clients, services } = useApp();
-  const [clientId, setClientId] = useState<string>(clients[0]?.id ?? "");
-  const [dataEmissao, setDataEmissao] = useState(today());
-  const [validade, setValidade] = useState(30);
-  const [honorarios, setHonorarios] = useState(0);
-  const [implantacao, setImplantacao] = useState(0);
-  const [obs, setObs] = useState("");
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  // Extra info per catalog service (keyed by service id).
-  const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>({});
-  const [custom, setCustom] = useState<ProposalItem[]>([]);
+  const isEdit = !!initial;
+
+  // Split initial items into catalog (matches a service id) vs custom
+  const initialCatalogIds = new Set<string>();
+  const initialCatalogInfo: Record<string, string> = {};
+  const initialCustom: ProposalItem[] = [];
+  if (initial) {
+    for (const it of initial.items) {
+      if (services.some((s) => s.id === it.serviceId)) {
+        initialCatalogIds.add(it.serviceId);
+        if (it.informacoes) initialCatalogInfo[it.serviceId] = it.informacoes;
+      } else {
+        initialCustom.push(it);
+      }
+    }
+  }
+
+  const [clientId, setClientId] = useState<string>(
+    initial?.clientId ?? clients[0]?.id ?? "",
+  );
+  const [dataEmissao, setDataEmissao] = useState(initial?.dataEmissao ?? today());
+  const [validade, setValidade] = useState(initial?.validadeDias ?? 30);
+  const [honorarios, setHonorarios] = useState(initial?.honorariosMensais ?? 0);
+  const [implantacao, setImplantacao] = useState(initial?.taxaImplantacao ?? 0);
+  const [obs, setObs] = useState(initial?.observacoes ?? "");
+  const [selected, setSelected] = useState<Set<string>>(initialCatalogIds);
+  const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>(initialCatalogInfo);
+  const [custom, setCustom] = useState<ProposalItem[]>(initialCustom);
+
   const [cNome, setCNome] = useState("");
   const [cModulo, setCModulo] = useState("Outros");
   const [cDesc, setCDesc] = useState("");
@@ -254,7 +320,7 @@ function NewProposalDialog({
   return (
     <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>Nova proposta</DialogTitle>
+        <DialogTitle>{isEdit ? `Editar proposta ${initial!.numero}` : "Nova proposta"}</DialogTitle>
       </DialogHeader>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -445,7 +511,7 @@ function NewProposalDialog({
                   informacoes: info || undefined,
                 };
               });
-            onCreate({
+            onSubmit({
               clientId,
               dataEmissao,
               validadeDias: validade,
@@ -456,8 +522,9 @@ function NewProposalDialog({
             });
           }}
         >
-          Criar proposta
+          {isEdit ? "Salvar alterações" : "Criar proposta"}
         </Button>
+
       </DialogFooter>
     </DialogContent>
   );
