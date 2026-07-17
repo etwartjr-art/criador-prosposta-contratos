@@ -114,6 +114,18 @@ export interface Contract {
   status: ContractStatus;
   observacoes?: string;
   createdAt: string;
+  dataAssinatura?: string;
+  localDataAssinatura?: string;
+  prazoVigenciaMeses?: number;
+  renovacaoAutomaticaDias?: number;
+  avisoNaoRenovacaoDias?: number;
+  avisoPrevioRescisaoDias?: number;
+  diaPagamento?: number;
+  formaPagamento?: string;
+  jurosMesPercent?: number;
+  multaMoratoriaPercent?: number;
+  /** Foro específico do contrato; se vazio usa o padrão da ETW */
+  foro?: string;
 }
 
 export interface EtwSettings {
