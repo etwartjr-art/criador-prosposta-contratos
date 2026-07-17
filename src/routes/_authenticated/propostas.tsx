@@ -249,7 +249,7 @@ function ProposalDialog({
   initial: Proposal | null;
   onSubmit: (data: ProposalFormData) => void;
 }) {
-  const { clients, services } = useApp();
+  const { clients, services, representatives } = useApp();
   const isEdit = !!initial;
 
   // Split initial items into catalog (matches a service id) vs custom
