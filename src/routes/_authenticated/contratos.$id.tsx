@@ -31,9 +31,13 @@ function ContractDetail() {
     representatives,
     etw,
     updateContract,
+    hydrated,
   } = useApp();
 
   const contract = contracts.find((c) => c.id === id);
+  if (!hydrated) {
+    return <p className="text-sm text-muted-foreground">Carregando…</p>;
+  }
   if (!contract) {
     return (
       <div className="space-y-4">
