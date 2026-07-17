@@ -417,7 +417,14 @@ export const useApp = create<State>()((set, get) => ({
       createdAt: new Date().toISOString(),
     };
     set({ proposals: [...get().proposals, proposal] });
-    bg("proposta", supabase.from("proposals").insert(proposalToRow(proposal)));
+    bg(
+      "proposta",
+      supabase.from("proposals").insert(proposalToRow(proposal)),
+      () =>
+        set({
+          proposals: get().proposals.filter((p) => p.id !== proposal.id),
+        }),
+    );
     return proposal;
   },
   updateProposal: (id, patch) => {
