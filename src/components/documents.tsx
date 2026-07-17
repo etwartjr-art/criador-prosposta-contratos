@@ -251,7 +251,12 @@ export function ContractDocument({
 
   return (
     <article className="mx-auto max-w-[820px] rounded-md border border-border bg-card p-10 text-sm leading-relaxed text-foreground shadow-sm print:shadow-none">
-      <header className="border-b border-border pb-4 text-center">
+      <header className="flex flex-col items-center border-b border-border pb-4 text-center">
+        <img
+          src={etwLogo.url}
+          alt={etw.razaoSocial}
+          className="mb-3 h-16 w-auto object-contain"
+        />
         <div className="text-xs uppercase tracking-widest text-muted-foreground">
           Contrato de prestação de serviços contábeis
         </div>
