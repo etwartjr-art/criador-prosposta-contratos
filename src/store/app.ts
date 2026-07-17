@@ -99,6 +99,11 @@ const mapRep = (r: any): Representative => ({
   cargo: r.cargo ?? undefined,
   email: r.email ?? undefined,
   telefone: r.telefone ?? undefined,
+  nacionalidade: r.nacionalidade ?? undefined,
+  estadoCivil: r.estado_civil ?? undefined,
+  profissao: r.profissao ?? undefined,
+  dataNascimento: r.data_nascimento ?? undefined,
+  endereco: r.endereco ?? undefined,
 });
 const repToRow = (r: Representative) => ({
   id: r.id,
@@ -109,6 +114,11 @@ const repToRow = (r: Representative) => ({
   cargo: r.cargo ?? null,
   email: r.email ?? null,
   telefone: r.telefone ?? null,
+  nacionalidade: r.nacionalidade ?? null,
+  estado_civil: r.estadoCivil ?? null,
+  profissao: r.profissao ?? null,
+  data_nascimento: r.dataNascimento ?? null,
+  endereco: r.endereco ?? null,
 });
 
 const mapService = (r: any): Service => ({
