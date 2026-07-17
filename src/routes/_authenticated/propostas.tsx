@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, FileText, Trash2, Eye } from "lucide-react";
+import { Plus, FileText, Trash2, Eye, Pencil } from "lucide-react";
 import { useApp } from "@/store/app";
 import type { Proposal, ProposalItem, ProposalStatus } from "@/lib/types";
 import { brl, formatDate, isExpired, today } from "@/lib/format";
@@ -59,6 +59,7 @@ function ProposalsPage() {
     removeProposal,
   } = useApp();
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Proposal | null>(null);
 
   const enriched = useMemo(
     () =>
@@ -78,22 +79,31 @@ function ProposalsPage() {
         title="Propostas / Orçamentos"
         description="Escopo, valores e condições comerciais das propostas enviadas aos clientes."
         actions={
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(null); }}>
             <DialogTrigger asChild>
-              <Button disabled={clients.length === 0}>
+              <Button disabled={clients.length === 0} onClick={() => setEditing(null)}>
                 <Plus className="mr-1 h-4 w-4" /> Nova proposta
               </Button>
             </DialogTrigger>
-            <NewProposalDialog
-              onCreate={(data) => {
-                const p = addProposal(data);
-                toast.success(`Proposta ${p.numero} criada`);
+            <ProposalDialog
+              key={editing?.id ?? "new"}
+              initial={editing}
+              onSubmit={(data) => {
+                if (editing) {
+                  updateProposal(editing.id, data);
+                  toast.success(`Proposta ${editing.numero} atualizada`);
+                } else {
+                  const p = addProposal(data);
+                  toast.success(`Proposta ${p.numero} criada`);
+                }
                 setOpen(false);
+                setEditing(null);
               }}
             />
           </Dialog>
         }
       />
+
 
       {clients.length === 0 && (
         <Card>
