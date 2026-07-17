@@ -108,6 +108,15 @@ function ContractDetail() {
                   <SelectItem value="Rescindido">Rescindido</SelectItem>
                 </SelectContent>
               </Select>
+              <Button variant="outline" asChild>
+                <a
+                  href={`/contratos/${contract.id}/documento`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Eye className="mr-1 h-4 w-4" /> Ver documento
+                </a>
+              </Button>
               <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-1 h-4 w-4" /> Imprimir / PDF
               </Button>
