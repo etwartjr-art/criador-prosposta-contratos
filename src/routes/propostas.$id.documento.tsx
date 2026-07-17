@@ -5,6 +5,7 @@ import { useApp } from "@/store/app";
 import { ProposalDocument } from "@/components/documents";
 import { ArrowLeft, Printer, Download } from "lucide-react";
 import { downloadElementAsPdf } from "@/lib/download-pdf";
+import { ShareLinkButtons } from "@/components/share-link-buttons";
 
 export const Route = createFileRoute("/propostas/$id/documento")({
   component: ProposalDocumentPage,
