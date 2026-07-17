@@ -126,6 +126,15 @@ function ProposalDetail() {
                   <Eye className="mr-1 h-4 w-4" /> Ver documento
                 </a>
               </Button>
+              <Button variant="outline" asChild>
+                <a
+                  href={`/propostas/${proposal.id}/contrato-preview`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <FileSignature className="mr-1 h-4 w-4" /> Pré-visualizar contrato
+                </a>
+              </Button>
 
               <Button variant="outline" onClick={() => window.print()}>
                 <Printer className="mr-1 h-4 w-4" /> Imprimir / PDF
