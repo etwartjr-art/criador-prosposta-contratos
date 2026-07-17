@@ -325,6 +325,3 @@ function NewProposalDialog({
     </DialogContent>
   );
 }
-
-// Silence unused warnings if any
-export const _u = { Badge, updateProposal: null };
