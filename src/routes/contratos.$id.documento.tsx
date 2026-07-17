@@ -46,11 +46,18 @@ function ContractDocumentPage() {
     if (contract) document.title = `Contrato ${contract.numero}`;
   }, [contract]);
 
+  if (!authChecked) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Verificando acesso…</div>
+    );
+  }
+
   if (!hydrated) {
     return (
       <div className="p-6 text-sm text-muted-foreground">Carregando documento…</div>
     );
   }
+
 
   if (!contract || !client) {
     return (
