@@ -59,7 +59,7 @@ function ProposalDocumentPage() {
         </div>
       </div>
       <div className="print-area mx-auto max-w-5xl bg-background shadow-sm">
-        <ProposalDocument proposal={proposal} client={client} etw={etw} />
+        <ProposalDocument proposal={proposal} client={client} etw={etw} representatives={representatives} />
       </div>
     </div>
   );
