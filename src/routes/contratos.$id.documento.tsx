@@ -1,5 +1,5 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
 import { ContractDocument } from "@/components/documents";
@@ -10,23 +10,31 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contratos/$id/documento")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session) {
-      throw redirect({ to: "/auth" });
-    }
-  },
   component: ContractDocumentPage,
 });
 
 function ContractDocumentPage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
   const { contracts, proposals, clients, representatives, etw, hydrated, hydrate } =
     useApp();
 
   useEffect(() => {
-    hydrate();
-  }, [hydrate]);
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        navigate({ to: "/auth" });
+      } else {
+        setAuthChecked(true);
+      }
+    });
+  }, [navigate]);
+
+  useEffect(() => {
+    if (authChecked) hydrate();
+  }, [authChecked, hydrate]);
+
+
 
   const contract = contracts.find((c) => c.id === id);
   const client = contract ? clients.find((c) => c.id === contract.clientId) : null;
@@ -38,11 +46,18 @@ function ContractDocumentPage() {
     if (contract) document.title = `Contrato ${contract.numero}`;
   }, [contract]);
 
+  if (!authChecked) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Verificando acesso…</div>
+    );
+  }
+
   if (!hydrated) {
     return (
       <div className="p-6 text-sm text-muted-foreground">Carregando documento…</div>
     );
   }
+
 
   if (!contract || !client) {
     return (
