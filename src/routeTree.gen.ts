@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropostasIdRouteImport } from './routes/propostas.$id'
 import { Route as ContratosIdRouteImport } from './routes/contratos.$id'
 import { Route as PropostasIdDocumentoRouteImport } from './routes/propostas.$id.documento'
+import { Route as ContratosIdDocumentoRouteImport } from './routes/contratos.$id.documento'
 
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
@@ -64,6 +65,11 @@ const PropostasIdDocumentoRoute = PropostasIdDocumentoRouteImport.update({
   path: '/documento',
   getParentRoute: () => PropostasIdRoute,
 } as any)
+const ContratosIdDocumentoRoute = ContratosIdDocumentoRouteImport.update({
+  id: '/documento',
+  path: '/documento',
+  getParentRoute: () => ContratosIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,8 +78,9 @@ export interface FileRoutesByFullPath {
   '/contratos': typeof ContratosRouteWithChildren
   '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
-  '/contratos/$id': typeof ContratosIdRoute
+  '/contratos/$id': typeof ContratosIdRouteWithChildren
   '/propostas/$id': typeof PropostasIdRouteWithChildren
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
   '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesByTo {
@@ -83,8 +90,9 @@ export interface FileRoutesByTo {
   '/contratos': typeof ContratosRouteWithChildren
   '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
-  '/contratos/$id': typeof ContratosIdRoute
+  '/contratos/$id': typeof ContratosIdRouteWithChildren
   '/propostas/$id': typeof PropostasIdRouteWithChildren
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
   '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRoutesById {
@@ -95,8 +103,9 @@ export interface FileRoutesById {
   '/contratos': typeof ContratosRouteWithChildren
   '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
-  '/contratos/$id': typeof ContratosIdRoute
+  '/contratos/$id': typeof ContratosIdRouteWithChildren
   '/propostas/$id': typeof PropostasIdRouteWithChildren
+  '/contratos/$id/documento': typeof ContratosIdDocumentoRoute
   '/propostas/$id/documento': typeof PropostasIdDocumentoRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/contratos/$id/documento'
     | '/propostas/$id/documento'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/contratos/$id/documento'
     | '/propostas/$id/documento'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/servicos'
     | '/contratos/$id'
     | '/propostas/$id'
+    | '/contratos/$id/documento'
     | '/propostas/$id/documento'
   fileRoutesById: FileRoutesById
 }
@@ -209,15 +221,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropostasIdDocumentoRouteImport
       parentRoute: typeof PropostasIdRoute
     }
+    '/contratos/$id/documento': {
+      id: '/contratos/$id/documento'
+      path: '/documento'
+      fullPath: '/contratos/$id/documento'
+      preLoaderRoute: typeof ContratosIdDocumentoRouteImport
+      parentRoute: typeof ContratosIdRoute
+    }
   }
 }
 
+interface ContratosIdRouteChildren {
+  ContratosIdDocumentoRoute: typeof ContratosIdDocumentoRoute
+}
+
+const ContratosIdRouteChildren: ContratosIdRouteChildren = {
+  ContratosIdDocumentoRoute: ContratosIdDocumentoRoute,
+}
+
+const ContratosIdRouteWithChildren = ContratosIdRoute._addFileChildren(
+  ContratosIdRouteChildren,
+)
+
 interface ContratosRouteChildren {
-  ContratosIdRoute: typeof ContratosIdRoute
+  ContratosIdRoute: typeof ContratosIdRouteWithChildren
 }
 
 const ContratosRouteChildren: ContratosRouteChildren = {
-  ContratosIdRoute: ContratosIdRoute,
+  ContratosIdRoute: ContratosIdRouteWithChildren,
 }
 
 const ContratosRouteWithChildren = ContratosRoute._addFileChildren(

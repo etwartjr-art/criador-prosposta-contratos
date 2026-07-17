@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, FileText, Trash2 } from "lucide-react";
+import { Plus, FileText, Trash2, Eye } from "lucide-react";
 import { useApp } from "@/store/app";
 import type { Proposal, ProposalItem, ProposalStatus } from "@/lib/types";
 import { brl, formatDate, isExpired, today } from "@/lib/format";
