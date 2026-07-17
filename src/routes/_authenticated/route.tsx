@@ -52,6 +52,27 @@ function StoreHydrator() {
 }
 
 function AuthedShell() {
+  const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        navigate({ to: "/auth" });
+      } else {
+        setAuthChecked(true);
+      }
+    });
+  }, [navigate]);
+
+  if (!authChecked) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">
+        Verificando acesso…
+      </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <StoreHydrator />
@@ -71,3 +92,4 @@ function AuthedShell() {
     </SidebarProvider>
   );
 }
+
