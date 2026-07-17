@@ -74,11 +74,18 @@ function ContractPreviewPage() {
     if (proposal) document.title = `Prévia do contrato · ${proposal.numero}`;
   }, [proposal]);
 
+  if (!authChecked) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Verificando acesso…</div>
+    );
+  }
+
   if (!hydrated) {
     return (
       <div className="p-6 text-sm text-muted-foreground">Carregando prévia…</div>
     );
   }
+
 
   if (!proposal || !client || !preview) {
     return (
