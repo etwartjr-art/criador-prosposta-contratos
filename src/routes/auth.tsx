@@ -63,6 +63,17 @@ function AuthPage() {
     else toast.success("Conta criada. Você já pode acessar.");
   }
 
+  async function signInGoogle() {
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setLoading(false);
+      toast.error(result.error.message ?? "Falha ao entrar com Google");
+    }
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
