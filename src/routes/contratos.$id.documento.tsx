@@ -35,14 +35,6 @@ function ContractDocumentPage() {
   }, [authChecked, hydrate]);
 
 
-function ContractDocumentPage() {
-  const { id } = Route.useParams();
-  const { contracts, proposals, clients, representatives, etw, hydrated, hydrate } =
-    useApp();
-
-  useEffect(() => {
-    hydrate();
-  }, [hydrate]);
 
   const contract = contracts.find((c) => c.id === id);
   const client = contract ? clients.find((c) => c.id === contract.clientId) : null;
