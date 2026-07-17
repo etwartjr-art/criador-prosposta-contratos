@@ -61,8 +61,20 @@ function ProposalsPage() {
     updateProposal,
     removeProposal,
   } = useApp();
+  const { edit: editId } = Route.useSearch();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Proposal | null>(null);
+
+  useEffect(() => {
+    if (editId) {
+      const p = proposals.find((x) => x.id === editId);
+      if (p) {
+        setEditing(p);
+        setOpen(true);
+      }
+    }
+  }, [editId, proposals]);
 
   const enriched = useMemo(
     () =>
