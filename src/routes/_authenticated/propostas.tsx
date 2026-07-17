@@ -299,7 +299,7 @@ function ProposalDialog({
   return (
     <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
       <DialogHeader>
-        <DialogTitle>Nova proposta</DialogTitle>
+        <DialogTitle>{isEdit ? `Editar proposta ${initial!.numero}` : "Nova proposta"}</DialogTitle>
       </DialogHeader>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
