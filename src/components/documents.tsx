@@ -74,6 +74,12 @@ export function ProposalDocument({
                 <div className="text-xs text-muted-foreground">{it.modulo}</div>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{it.descricao}</p>
+              {it.informacoes && (
+                <p className="mt-1 whitespace-pre-line text-sm">
+                  <span className="font-medium">Informações adicionais:</span>{" "}
+                  {it.informacoes}
+                </p>
+              )}
             </li>
           ))}
         </ul>
