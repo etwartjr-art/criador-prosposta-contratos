@@ -11,8 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicosRouteImport } from './routes/servicos'
 import { Route as PropostasRouteImport } from './routes/propostas'
+import { Route as ContratosRouteImport } from './routes/contratos'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as ClientesRouteImport } from './routes/clientes'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PropostasIdRouteImport } from './routes/propostas.$id'
+import { Route as ContratosIdRouteImport } from './routes/contratos.$id'
 
 const ServicosRoute = ServicosRouteImport.update({
   id: '/servicos',
@@ -22,6 +26,16 @@ const ServicosRoute = ServicosRouteImport.update({
 const PropostasRoute = PropostasRouteImport.update({
   id: '/propostas',
   path: '/propostas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContratosRoute = ContratosRouteImport.update({
+  id: '/contratos',
+  path: '/contratos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientesRoute = ClientesRouteImport.update({
@@ -34,38 +48,87 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropostasIdRoute = PropostasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PropostasRoute,
+} as any)
+const ContratosIdRoute = ContratosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ContratosRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
-  '/propostas': typeof PropostasRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/contratos': typeof ContratosRouteWithChildren
+  '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
+  '/contratos/$id': typeof ContratosIdRoute
+  '/propostas/$id': typeof PropostasIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
-  '/propostas': typeof PropostasRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/contratos': typeof ContratosRouteWithChildren
+  '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
+  '/contratos/$id': typeof ContratosIdRoute
+  '/propostas/$id': typeof PropostasIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/clientes': typeof ClientesRoute
-  '/propostas': typeof PropostasRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/contratos': typeof ContratosRouteWithChildren
+  '/propostas': typeof PropostasRouteWithChildren
   '/servicos': typeof ServicosRoute
+  '/contratos/$id': typeof ContratosIdRoute
+  '/propostas/$id': typeof PropostasIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/clientes' | '/propostas' | '/servicos'
+  fullPaths:
+    | '/'
+    | '/clientes'
+    | '/configuracoes'
+    | '/contratos'
+    | '/propostas'
+    | '/servicos'
+    | '/contratos/$id'
+    | '/propostas/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/clientes' | '/propostas' | '/servicos'
-  id: '__root__' | '/' | '/clientes' | '/propostas' | '/servicos'
+  to:
+    | '/'
+    | '/clientes'
+    | '/configuracoes'
+    | '/contratos'
+    | '/propostas'
+    | '/servicos'
+    | '/contratos/$id'
+    | '/propostas/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/clientes'
+    | '/configuracoes'
+    | '/contratos'
+    | '/propostas'
+    | '/servicos'
+    | '/contratos/$id'
+    | '/propostas/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ClientesRoute: typeof ClientesRoute
-  PropostasRoute: typeof PropostasRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ContratosRoute: typeof ContratosRouteWithChildren
+  PropostasRoute: typeof PropostasRouteWithChildren
   ServicosRoute: typeof ServicosRoute
 }
 
@@ -85,6 +148,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropostasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contratos': {
+      id: '/contratos'
+      path: '/contratos'
+      fullPath: '/contratos'
+      preLoaderRoute: typeof ContratosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clientes': {
       id: '/clientes'
       path: '/clientes'
@@ -99,13 +176,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/propostas/$id': {
+      id: '/propostas/$id'
+      path: '/$id'
+      fullPath: '/propostas/$id'
+      preLoaderRoute: typeof PropostasIdRouteImport
+      parentRoute: typeof PropostasRoute
+    }
+    '/contratos/$id': {
+      id: '/contratos/$id'
+      path: '/$id'
+      fullPath: '/contratos/$id'
+      preLoaderRoute: typeof ContratosIdRouteImport
+      parentRoute: typeof ContratosRoute
+    }
   }
 }
+
+interface ContratosRouteChildren {
+  ContratosIdRoute: typeof ContratosIdRoute
+}
+
+const ContratosRouteChildren: ContratosRouteChildren = {
+  ContratosIdRoute: ContratosIdRoute,
+}
+
+const ContratosRouteWithChildren = ContratosRoute._addFileChildren(
+  ContratosRouteChildren,
+)
+
+interface PropostasRouteChildren {
+  PropostasIdRoute: typeof PropostasIdRoute
+}
+
+const PropostasRouteChildren: PropostasRouteChildren = {
+  PropostasIdRoute: PropostasIdRoute,
+}
+
+const PropostasRouteWithChildren = PropostasRoute._addFileChildren(
+  PropostasRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ClientesRoute: ClientesRoute,
-  PropostasRoute: PropostasRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  ContratosRoute: ContratosRouteWithChildren,
+  PropostasRoute: PropostasRouteWithChildren,
   ServicosRoute: ServicosRoute,
 }
 export const routeTree = rootRouteImport
