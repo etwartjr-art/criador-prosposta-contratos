@@ -319,7 +319,11 @@ export const useApp = create<State>()((set, get) => ({
       createdAt: new Date().toISOString(),
     };
     set({ clients: [...get().clients, client] });
-    bg("cliente", supabase.from("clients").insert(clientToRow(client)));
+    bg(
+      "cliente",
+      supabase.from("clients").insert(clientToRow(client)),
+      () => set({ clients: get().clients.filter((c) => c.id !== client.id) }),
+    );
     return client;
   },
   updateClient: (id, patch) => {
