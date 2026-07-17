@@ -1,5 +1,5 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
 import { ContractDocument } from "@/components/documents";
@@ -10,14 +10,30 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contratos/$id/documento")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session) {
-      throw redirect({ to: "/auth" });
-    }
-  },
   component: ContractDocumentPage,
 });
+
+function ContractDocumentPage() {
+  const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
+  const { contracts, proposals, clients, representatives, etw, hydrated, hydrate } =
+    useApp();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        navigate({ to: "/auth" });
+      } else {
+        setAuthChecked(true);
+      }
+    });
+  }, [navigate]);
+
+  useEffect(() => {
+    if (authChecked) hydrate();
+  }, [authChecked, hydrate]);
+
 
 function ContractDocumentPage() {
   const { id } = Route.useParams();
