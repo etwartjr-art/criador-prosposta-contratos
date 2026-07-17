@@ -251,6 +251,3 @@ function ServiceForm({
     </DialogContent>
   );
 }
-
-export { ServicesPage as _S };
-export const _unused_badge = Badge;
