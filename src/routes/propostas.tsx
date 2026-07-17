@@ -201,10 +201,13 @@ function NewProposalDialog({
   const [implantacao, setImplantacao] = useState(0);
   const [obs, setObs] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  // Extra info per catalog service (keyed by service id).
+  const [catalogInfo, setCatalogInfo] = useState<Record<string, string>>({});
   const [custom, setCustom] = useState<ProposalItem[]>([]);
   const [cNome, setCNome] = useState("");
   const [cModulo, setCModulo] = useState("Outros");
   const [cDesc, setCDesc] = useState("");
+  const [cInfo, setCInfo] = useState("");
 
   const toggle = (id: string) => {
     const n = new Set(selected);
@@ -225,10 +228,12 @@ function NewProposalDialog({
         nome: cNome.trim(),
         modulo: cModulo || "Outros",
         descricao: cDesc.trim(),
+        informacoes: cInfo.trim() || undefined,
       },
     ]);
     setCNome("");
     setCDesc("");
+    setCInfo("");
     setCModulo("Outros");
   };
 
