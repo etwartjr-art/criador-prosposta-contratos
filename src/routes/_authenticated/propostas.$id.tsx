@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { ArrowLeft, CheckCircle2, Printer, XCircle, Send, Eye } from "lucide-react";
 import type { ProposalStatus } from "@/lib/types";
 
-export const Route = createFileRoute("/propostas/$id")({
+export const Route = createFileRoute("/_authenticated/propostas/$id")({
   component: ProposalDetail,
 });
 

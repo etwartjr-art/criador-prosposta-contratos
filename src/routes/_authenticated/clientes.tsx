@@ -36,7 +36,7 @@ import { useApp } from "@/store/app";
 import type { Client, Representative } from "@/lib/types";
 import { maskCEP, maskCNPJ, maskCPF } from "@/lib/format";
 
-export const Route = createFileRoute("/clientes")({
+export const Route = createFileRoute("/_authenticated/clientes")({
   component: ClientsPage,
 });
 

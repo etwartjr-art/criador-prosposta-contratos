@@ -16,7 +16,7 @@ import { brl, formatDate } from "@/lib/format";
 import { FileSignature, Trash2, Eye } from "lucide-react";
 import type { ContractStatus } from "@/lib/types";
 
-export const Route = createFileRoute("/contratos")({
+export const Route = createFileRoute("/_authenticated/contratos")({
   component: ContractsPage,
 });
 

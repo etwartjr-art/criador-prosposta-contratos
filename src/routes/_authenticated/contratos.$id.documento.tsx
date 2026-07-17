@@ -2,35 +2,38 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
-import { ProposalDocument } from "@/components/documents";
+import { ContractDocument } from "@/components/documents";
 import { ArrowLeft, Printer, Download } from "lucide-react";
 import { downloadElementAsPdf } from "@/lib/download-pdf";
 import { ShareLinkButtons } from "@/components/share-link-buttons";
 
-export const Route = createFileRoute("/propostas/$id/documento")({
-  component: ProposalDocumentPage,
+export const Route = createFileRoute("/_authenticated/contratos/$id/documento")({
+  component: ContractDocumentPage,
 });
 
-function ProposalDocumentPage() {
+function ContractDocumentPage() {
   const { id } = Route.useParams();
-  const { proposals, clients, etw } = useApp();
-  const proposal = proposals.find((p) => p.id === id);
-  const client = proposal ? clients.find((c) => c.id === proposal.clientId) : null;
+  const { contracts, proposals, clients, representatives, etw } = useApp();
+  const contract = contracts.find((c) => c.id === id);
+  const client = contract ? clients.find((c) => c.id === contract.clientId) : null;
+  const proposal = contract
+    ? proposals.find((p) => p.id === contract.proposalId)
+    : undefined;
 
   useEffect(() => {
-    if (proposal) document.title = `Proposta ${proposal.numero}`;
-  }, [proposal]);
+    if (contract) document.title = `Contrato ${contract.numero}`;
+  }, [contract]);
 
-  if (!proposal || !client) {
+  if (!contract || !client) {
     return (
       <div className="p-6">
         <Button variant="ghost" asChild>
-          <Link to="/propostas">
+          <Link to="/contratos">
             <ArrowLeft className="mr-1 h-4 w-4" /> Voltar
           </Link>
         </Button>
         <p className="mt-4 text-sm text-muted-foreground">
-          Proposta não encontrada.
+          Contrato não encontrado.
         </p>
       </div>
     );
@@ -40,18 +43,18 @@ function ProposalDocumentPage() {
     <div className="min-h-screen bg-muted/30 py-6">
       <div className="no-print mx-auto mb-4 flex max-w-5xl items-center justify-between px-4">
         <Button variant="ghost" asChild>
-          <Link to="/propostas/$id" params={{ id: proposal.id }}>
-            <ArrowLeft className="mr-1 h-4 w-4" /> Voltar à proposta
+          <Link to="/contratos/$id" params={{ id: contract.id }}>
+            <ArrowLeft className="mr-1 h-4 w-4" /> Voltar ao contrato
           </Link>
         </Button>
         <div className="flex flex-wrap gap-2">
-          <ShareLinkButtons title={`Proposta ${proposal.numero}`} />
+          <ShareLinkButtons title={`Contrato ${contract.numero}`} />
           <Button variant="outline" onClick={() => window.print()}>
             <Printer className="mr-1 h-4 w-4" /> Imprimir
           </Button>
           <Button
             onClick={() =>
-              downloadElementAsPdf(".print-area", `Proposta-${proposal.numero}`)
+              downloadElementAsPdf(".print-area", `Contrato-${contract.numero}`)
             }
           >
             <Download className="mr-1 h-4 w-4" /> Baixar PDF
@@ -59,7 +62,13 @@ function ProposalDocumentPage() {
         </div>
       </div>
       <div className="print-area mx-auto max-w-5xl bg-background shadow-sm">
-        <ProposalDocument proposal={proposal} client={client} etw={etw} />
+        <ContractDocument
+          contract={contract}
+          proposal={proposal}
+          client={client}
+          representatives={representatives}
+          etw={etw}
+        />
       </div>
     </div>
   );

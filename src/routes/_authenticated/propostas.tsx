@@ -37,7 +37,7 @@ import { useApp } from "@/store/app";
 import type { Proposal, ProposalItem, ProposalStatus } from "@/lib/types";
 import { brl, formatDate, isExpired, today } from "@/lib/format";
 
-export const Route = createFileRoute("/propostas")({
+export const Route = createFileRoute("/_authenticated/propostas")({
   component: ProposalsPage,
 });
 
