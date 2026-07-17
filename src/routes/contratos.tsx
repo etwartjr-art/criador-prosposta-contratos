@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { brl, formatDate } from "@/lib/format";
-import { FileSignature, Trash2 } from "lucide-react";
+import { FileSignature, Trash2, Eye } from "lucide-react";
 import type { ContractStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/contratos")({
