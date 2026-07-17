@@ -46,9 +46,18 @@ function ContractDocumentPage() {
             <ArrowLeft className="mr-1 h-4 w-4" /> Voltar ao contrato
           </Link>
         </Button>
-        <Button onClick={() => window.print()}>
-          <Printer className="mr-1 h-4 w-4" /> Imprimir / PDF
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => window.print()}>
+            <Printer className="mr-1 h-4 w-4" /> Imprimir
+          </Button>
+          <Button
+            onClick={() =>
+              downloadElementAsPdf(".print-area", `Contrato-${contract.numero}`)
+            }
+          >
+            <Download className="mr-1 h-4 w-4" /> Baixar PDF
+          </Button>
+        </div>
       </div>
       <div className="print-area mx-auto max-w-5xl bg-background shadow-sm">
         <ContractDocument
