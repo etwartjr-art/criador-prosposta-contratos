@@ -1,5 +1,5 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/store/app";
 import { ProposalDocument } from "@/components/documents";
@@ -10,22 +10,29 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/propostas/$id/documento")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session) {
-      throw redirect({ to: "/auth" });
-    }
-  },
   component: ProposalDocumentPage,
 });
 
 function ProposalDocumentPage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = useState(false);
   const { proposals, clients, etw, representatives, hydrated, hydrate } = useApp();
 
   useEffect(() => {
-    hydrate();
-  }, [hydrate]);
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        navigate({ to: "/auth" });
+      } else {
+        setAuthChecked(true);
+      }
+    });
+  }, [navigate]);
+
+  useEffect(() => {
+    if (authChecked) hydrate();
+  }, [authChecked, hydrate]);
+
 
   const proposal = proposals.find((p) => p.id === id);
   const client = proposal ? clients.find((c) => c.id === proposal.clientId) : null;
