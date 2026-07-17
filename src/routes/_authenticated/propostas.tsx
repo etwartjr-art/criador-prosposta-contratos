@@ -383,6 +383,84 @@ function ProposalDialog({
           />
         </div>
         <div className="sm:col-span-2">
+          <Label>Assunto / objeto da proposta</Label>
+          <Input
+            value={assunto}
+            onChange={(e) => setAssunto(e.target.value)}
+            placeholder="Ex.: Serviços contábeis mensais para o exercício de 2026"
+          />
+        </div>
+        <div>
+          <Label>Cidade/UF de emissão</Label>
+          <Input
+            value={cidadeUf}
+            onChange={(e) => setCidadeUf(e.target.value)}
+            placeholder="Goiânia - GO"
+          />
+        </div>
+        <div>
+          <Label>Responsável do cliente</Label>
+          <Select value={responsavelId || "none"} onValueChange={(v) => setResponsavelId(v === "none" ? "" : v)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">— nenhum —</SelectItem>
+              {clientReps.map((r) => (
+                <SelectItem key={r.id} value={r.id}>
+                  {r.nome}
+                  {r.cargo ? ` — ${r.cargo}` : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Índice de reajuste</Label>
+          <Input
+            value={indiceReajuste}
+            onChange={(e) => setIndiceReajuste(e.target.value)}
+            placeholder="IPCA, IGP-M..."
+          />
+        </div>
+        <div>
+          <Label>Forma de pagamento</Label>
+          <Input
+            value={formaPagamento}
+            onChange={(e) => setFormaPagamento(e.target.value)}
+            placeholder="Boleto, PIX, Transferência..."
+          />
+        </div>
+        <div>
+          <Label>Dia de vencimento</Label>
+          <Input
+            type="number"
+            min={1}
+            max={31}
+            value={diaVencimento}
+            onChange={(e) => setDiaVencimento(e.target.value ? Number(e.target.value) : "")}
+          />
+        </div>
+        <div>
+          <Label>Dia útil de entrega</Label>
+          <Input
+            type="number"
+            min={1}
+            max={25}
+            value={diaUtilEntrega}
+            onChange={(e) => setDiaUtilEntrega(e.target.value ? Number(e.target.value) : "")}
+          />
+        </div>
+        <div>
+          <Label>Prazo de implantação (dias)</Label>
+          <Input
+            type="number"
+            min={0}
+            value={prazoImplantacao}
+            onChange={(e) => setPrazoImplantacao(e.target.value ? Number(e.target.value) : "")}
+          />
+        </div>
+        <div className="sm:col-span-2">
           <Label>Observações</Label>
           <Textarea rows={2} value={obs} onChange={(e) => setObs(e.target.value)} />
         </div>
