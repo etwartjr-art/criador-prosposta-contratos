@@ -172,6 +172,7 @@ function StoreHydrator() {
   const hydrate = useApp((s) => s.hydrate);
   useEffect(() => {
     hydrate();
+    registerPwa();
   }, [hydrate]);
   return null;
 }
