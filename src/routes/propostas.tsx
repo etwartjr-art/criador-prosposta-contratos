@@ -306,24 +306,40 @@ function NewProposalDialog({
             Serviços do catálogo ({selected.size} selecionado
             {selected.size === 1 ? "" : "s"})
           </Label>
-          <div className="mt-2 max-h-56 space-y-1 overflow-y-auto rounded-md border border-border p-2">
-            {services.map((s) => (
-              <label
-                key={s.id}
-                className="flex cursor-pointer items-start gap-2 rounded p-2 hover:bg-muted"
-              >
-                <Checkbox
-                  checked={selected.has(s.id)}
-                  onCheckedChange={() => toggle(s.id)}
-                />
-                <div className="flex-1">
-                  <div className="text-sm font-medium">{s.nome}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {s.modulo} · {s.descricaoEscopo}
-                  </div>
+          <div className="mt-2 max-h-72 space-y-1 overflow-y-auto rounded-md border border-border p-2">
+            {services.map((s) => {
+              const checked = selected.has(s.id);
+              return (
+                <div key={s.id} className="rounded p-2 hover:bg-muted">
+                  <label className="flex cursor-pointer items-start gap-2">
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={() => toggle(s.id)}
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium">{s.nome}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {s.modulo} · {s.descricaoEscopo}
+                      </div>
+                    </div>
+                  </label>
+                  {checked && (
+                    <Textarea
+                      rows={2}
+                      className="mt-2 text-xs"
+                      placeholder="Informações adicionais para este serviço (opcional): valores, prazos, particularidades, dados do cliente..."
+                      value={catalogInfo[s.id] ?? ""}
+                      onChange={(e) =>
+                        setCatalogInfo({
+                          ...catalogInfo,
+                          [s.id]: e.target.value,
+                        })
+                      }
+                    />
+                  )}
                 </div>
-              </label>
-            ))}
+              );
+            })}
           </div>
         </div>
 
