@@ -384,7 +384,11 @@ export const useApp = create<State>()((set, get) => ({
   addService: (s) => {
     const svc: Service = { ...s, id: nanoid() };
     set({ services: [...get().services, svc] });
-    bg("serviço", supabase.from("services").insert(serviceToRow(svc)));
+    bg(
+      "serviço",
+      supabase.from("services").insert(serviceToRow(svc)),
+      () => set({ services: get().services.filter((s) => s.id !== svc.id) }),
+    );
     return svc;
   },
   updateService: (id, patch) => {
