@@ -21,8 +21,12 @@ export const Route = createFileRoute("/_authenticated/propostas/$id")({
 function ProposalDetail() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const { proposals, clients, etw, representatives, updateProposal, approveProposal } = useApp();
+  const { proposals, clients, etw, representatives, updateProposal, approveProposal, hydrated } = useApp();
   const proposal = proposals.find((p) => p.id === id);
+
+  if (!hydrated) {
+    return <p className="text-sm text-muted-foreground">Carregando…</p>;
+  }
 
   if (!proposal) {
     return (
